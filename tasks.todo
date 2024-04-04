@@ -1,7 +1,7 @@
-+ [ ] **Establish WebSocket Connection Between Client and Server:**
++ [x] **Establish WebSocket Connection Between Client and Server:**
   - Implement WebSocket communication to enable real-time interaction between clients and the server.
 
-+ [ ] **Enable User to Create a Player with a Nickname:**
++ [x] **Enable User to Create a Player with a Nickname:** ⛔ HUBBLIFY
   - Develop a user interface where players can input their nicknames. (<HUBBLE>)(Client Side)
   - Implement functionality to create a player entity associated with the provided nickname. (Server Side)
 
