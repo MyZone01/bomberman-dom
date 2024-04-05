@@ -2,7 +2,6 @@
     --sun-color: orange;
     --select-box-size: 80px;
 }
-
 body {
     font-size: 12px;
     font-family: 'Offside';
@@ -12,7 +11,6 @@ body {
     justify-content: center;
     align-items: center;
 }
-
 .player-settings {
     height: 80vh;
     width: 50%;
@@ -28,14 +26,12 @@ body {
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.18);
 }
-
 .select-emoji-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     background-color: #eee;
     border-radius: calc(var(--select-box-size) / 2);
 }
-
 .select-emoji {
     user-select: none;
     position: relative;
@@ -48,37 +44,30 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 .select-emoji.selected {
     transform: translateY(-10px);
 }
-
 .emoji-select-wrapper:hover .select-emoji {
     cursor: pointer;
     transform: translateY(-10px);
 }
-
 /* Animation behind selected emoji */
 @keyframes grow {
     from {
         transform: scale(50%) rotate(0deg);
     }
-
     to {
         transform: scale(100%) rotate(60deg);
     }
 }
-
 @keyframes spin {
     from {
         transform: rotate(0deg);
     }
-
     to {
         transform: rotate(360deg);
     }
 }
-
 .sun {
     z-index: -1;
     /* make sun appear behind emoji */
@@ -89,7 +78,6 @@ body {
     height: var(--select-box-size);
     animation: spin 3s linear 0.5s infinite, grow 0.5s linear;
 }
-
 .ray {
     position: absolute;
     top: 0px;
@@ -98,15 +86,12 @@ body {
     height: 100%;
     background-color: var(--sun-color);
 }
-
 .ray:nth-child(2) {
     transform: rotate(30deg);
 }
-
 .ray:nth-child(3) {
     transform: rotate(60deg);
 }
-
 input {
     font-family: "Roboto", sans-serif;
     outline: 0;
@@ -118,7 +103,6 @@ input {
     box-sizing: border-box;
     font-size: 14px;
 }
-
 button {
     background-color: #71D971;
     border: 0px;
@@ -130,13 +114,11 @@ button {
     font-family: 'Offside';
     margin-top: auto;
 }
-
 button:hover {
     background-color: #40B440;
     -webkit-box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, .5);
     box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, .5);
 }
-
 p {
     font-size: 20px;
 }

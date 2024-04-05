@@ -1,0 +1,47 @@
+
+<div
+  class="player-settings"
+  x-data="{emojis:[
+    { name: '😁', selected: false },
+    { name: '😡', selected: false },
+    { name: '😱', selected: false },
+    { name: '😎', selected: false },
+    { name: '👽', selected: false },
+    { name: '🤯', selected: false },
+    { name: '😈', selected: false },
+    { name: '💩', selected: false },
+    { name: '🥸', selected: false },
+    { name: '🤠', selected: false },
+    { name: '🤖', selected: false },
+    { name: '🤡', selected: false }
+  ],
+  namePlayer:'',
+  selectedemoji:''
+  }"
+>
+    <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
+    <p>Select your player</p>
+    <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
+      <div class="emoji-select-wrapper" @click="
+      $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
+      $selectedemoji=emojiItem.name
+      " >
+        <div class="select-emoji selected" x-if="emojiItem.selected"><span x-text="emojiItem.name"></span>
+            <div class="sun">
+                <div class="ray"></div>
+                <div class="ray"></div>
+                <div class="ray"></div>
+            </div>
+        </div>
+        <div class="select-emoji" x-else ><span x-text="emojiItem.name"></span></div>
+      </div>
+    </div>
+    <button id="starttest" @click="
+        let player={
+           name: $namePlayer,
+           emoji:$selectedemoji
+        }
+        console.log(player);
+        
+    ">Start</button>
+</div>

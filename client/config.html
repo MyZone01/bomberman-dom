@@ -1,15 +1,12 @@
-<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./static/css/style.css">
     <title>Document</title>
     <script defer>
         // Tableau contenant les emojis
         const emojis = ['😁', '😡', '😱', '😎', '👽', '🤯', '😈', '💩', '🥸', '🤠', '🤖', '🤡'];
-
         // Fonction pour générer les éléments HTML correspondants aux emojis
         function createEmojiElements() {
             const container = document.querySelector('.select-emoji-container');
@@ -23,18 +20,13 @@
                 container.appendChild(emojiWrapper);
             });
         }
-
         // Ajout de l'écouteur d'événement pour la sélection d'emoji
         document.addEventListener('DOMContentLoaded', function () {
             createEmojiElements();
-
             let selectedEmoji;
-
             document.querySelector('.select-emoji-container').addEventListener('click', function (e) {
                 let element = e.target.closest('.select-emoji');
-
                 if (!element) return;
-
                 if (!element.classList.contains('select-emoji')) {
                     console.log('you did not click an emoji')
                     return;
@@ -42,13 +34,11 @@
                 if (element.classList.contains('selected')) {
                     return;
                 }
-
                 document.querySelectorAll('.select-emoji').forEach(function (e) {
                     const sun = document.querySelector('.sun');
                     if (sun) sun.remove();
                     e.classList.remove('selected');
                 });
-
                 element.classList.add('selected');
                 element.insertAdjacentHTML('beforeend', `
         <div class="sun">
@@ -61,19 +51,17 @@
                 console.log(`the selected emoji is ${selectedEmoji}`);
             });
         });
-
     </script>
 </head>
-
 <body>
     <div class="player-settings">
         <input type="text" placeholder="Player Name" />
         <p>Select your player</p>
         <div class="select-emoji-container">
+            
         </div>
         <button id="starttest">Start</button>
     </div>
     </div>
 </body>
-
 </html>
