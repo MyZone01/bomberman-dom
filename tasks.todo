@@ -1,23 +1,25 @@
-+ [ ] **Establish WebSocket Connection Between Client and Server:**
++ [x] **Establish WebSocket Connection Between Client and Server:**
   - Implement WebSocket communication to enable real-time interaction between clients and the server.
 
-+ [ ] **Enable User to Create a Player with a Nickname:**
-  - Develop a user interface where players can input their nicknames. (<HUBBLE>)(Client Side)
++ [x] **Enable User to Create a Player with a Nickname:**
+  - Develop a user interface where players can input their nicknames. (Client Side)
   - Implement functionality to create a player entity associated with the provided nickname. (Server Side)
 
 + [ ] **Enable User to Get into the waiting room:**
-  - Implement a unique room system where players can join and wait for the game to start. (<HUBBLE>)(Client Side)
+  - Implement a unique room system where players can join and wait for the game to start. (Client Side)
   - Implement a logic to reject players when room is full of capacity. (Server Side)
 
 + [ ] **Listen for User Messages:**
-  - Implement message listening functionality to enable players to communicate with each other via chat. (<HUBBLE>)
-  - Implement message sending functionality to enable players to communicate with other via chat. (<HUBBLE>)
+  - Implement message listening functionality to enable players to communicate with each other via chat. 
+  - Implement message sending functionality to enable players to communicate with other via chat. 
 
 + [ ] **Make Game Start Waiting for New Player:**
   - Develop functionality to start the game only when the required number of players have joined the room.
 
 + [ ] **Implement Countdown Before Game Start:**
   - Display a countdown timer to inform players about the time remaining before the game starts.
+
++ [ ] Hubblify all interfaces
 
 ---
 
@@ -42,7 +44,7 @@
   - **Show Enemy Movement:** Update the game board to reflect enemy movement.
 
 + [ ] **Show Game Over Menu:**
-  - **Win Game:** Display a victory message when a player wins the game. (<HUBBLE>)
-  - **Lose Game:** Display a defeat message when a player loses the game. (<HUBBLE>)
+  - **Win Game:** Display a victory message when a player wins the game. 
+  - **Lose Game:** Display a defeat message when a player loses the game. 
 
 + [ ] **Optimize Some Func:**
