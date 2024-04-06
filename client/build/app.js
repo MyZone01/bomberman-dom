@@ -194,9 +194,7 @@ export default class Router extends HTMLElement {
          */
         this.hashChangeListener = event => {
             this.previousRoute = this.route(location.hash, false, event.newURL === event.oldURL)
-            if(window?.hubble){
-                window.hubble.start()
-            }
+            window.hubble.start()
         }
     }
     connectedCallback() {
@@ -218,7 +216,7 @@ export default class Router extends HTMLElement {
         // escape on route call which is not set by hashchange event and trigger it here, if needed
         if (location.hash !== hash) {
             if (replace) location.replace(hash);
-            return this.previousRoutewindow.hubble.start()
+            return this.previousRoute
         }
         let route
         // find the correct route or do nothing
@@ -253,9 +251,8 @@ export default class Router extends HTMLElement {
      */
     render(component) {
         // clear previous content
-        this.innerHTML = '' 
+        this.innerHTML = ''
         this.appendChild(component)
-        
     }
 }
 customElements.define('hub-router', Router);
@@ -375,6 +372,7 @@ window.hubble = {
     }
   },
   start() {
+    this.data=[]
     const dataElements = document.querySelectorAll('[x-data]');
 
     dataElements.forEach((element) => {

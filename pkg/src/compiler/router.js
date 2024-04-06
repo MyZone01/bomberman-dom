@@ -30,6 +30,7 @@ export default class Router extends HTMLElement {
          */
         this.hashChangeListener = event => {
             this.previousRoute = this.route(location.hash, false, event.newURL === event.oldURL)
+            window.hubble.start()
         }
     }
     connectedCallback() {

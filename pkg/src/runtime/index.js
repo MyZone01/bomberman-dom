@@ -114,6 +114,7 @@ window.hubble = {
     }
   },
   start() {
+    this.data=[]
     const dataElements = document.querySelectorAll('[x-data]');
 
     dataElements.forEach((element) => {
