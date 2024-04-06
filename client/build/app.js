@@ -74,10 +74,12 @@ class page extends HTMLElement {
         let data=JSON.parse(event.data)
         if (data?.type ==='create-successfully') {
           location.hash='#/room'
+          window.players=data?.payload
           window.ws.onmessage =null
           return
         }
-        $errorform='connection error'
+        window.ws=null
+        $errorform=data?.payload
       };
 
     ">Start</button>
@@ -143,17 +145,17 @@ class Roompage extends HTMLElement {
 </style>
 
 <div class="container" 
-x-data="{
-    player: window.ws
-}
+  x-data="{
+      players: window.players
+  }
 ">
-<p x-text="$player" @readystatechange="
- console.log("alpapie");
-" ></p>
+  <hubble x-for=" playerItem, key in $players" >
     <div class="card">
-      <img src="https://lh3.googleusercontent.com/ytP9VP86DItizVX2YNA-xTYzV09IS7rh4WexVp7eilIcfHmm74B7odbcwD5DTXmL0PF42i2wnRKSFPBHlmSjCblWHDCD2oD1oaM1CGFcSd48VBKJfsCi4bS170PKxGwji8CPmehwPw=w200-h247-no" alt="Person" class="card__image">
-      <p class="card__name" >Lily-Grace Colley</p>
+      <img src="" alt="Person" class="card__image"> <span x-text="playerItem.emoji"></span>
+      <p class="card__name" x-text="playerItem.nickname"></p>
     </div>
+
+  </hubble>
     
   </div>
         `;
