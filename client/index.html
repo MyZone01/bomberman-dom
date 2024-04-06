@@ -9,7 +9,35 @@
 </head>
 
 <body>
-  <input type="text" id="nickname"/>
-  <button onclick="connect()">Connect</button>
-  <script src="./main.js"></script>
+  <div id="game-board"></div>
+  <!-- <input type="text" id="nickname" />
+  <button id="btn-connect">Connect</button> -->
+  <!-- <div id="countdown"></div>
+  <script>
+    // Function to start the countdown timer
+    function startCountdown(duration, callback) {
+      let timer = duration;
+      const countdownElement = document.getElementById('countdown');
+
+      const countdownInterval = setInterval(() => {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+
+        countdownElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (--timer < 0) {
+          clearInterval(countdownInterval);
+          countdownElement.textContent = 'Game starting...';
+          setTimeout(callback, 2000); // Start the game after 2 seconds
+        }
+      }, 1000);
+    }
+
+    // Call startCountdown function with the duration in seconds
+    const countdownDuration = 10; // 10 seconds countdown
+    startCountdown(countdownDuration, startGame);
+
+  </script> -->
+  <script type="module" src="./main.js"></script>
+
 </html>
