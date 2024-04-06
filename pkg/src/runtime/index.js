@@ -99,7 +99,6 @@ window.hubble = {
       el.innerHTML = '';
 
       const _array = array.replaceAll('$', '');
-      console.log(hubble.data[uuid],_array,hubble.data[uuid][_array]);
       hubble.data[uuid][_array].forEach((_, index) => {
         const templateInstance = document.createElement('template');
         let html = template.replaceAll(new RegExp(item, 'g'), `${array}[${index}]`);

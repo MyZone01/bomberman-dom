@@ -1,39 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500&display=swap");
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Bomberman</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>💣</text></svg>">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="start-screen" class="screen">
-        <audio id="mainMenuAudio" loop>
-            <source src="assets/sounds/main-menu.mp3" type="audio/mp3">
-        </audio>
-        <audio id="playSound">
-            <source src="assets/sounds/Title Screen Select.wav" type="audio/mp3">
-        </audio>
-        <h1>BomberMan</h1>
-        <a href="./game.html" id="start">
-            <img src="fonts/Bomberman.png" alt="">
-            <span class="now">now!</span>
-            <span class="play">play</span>
-        </a>
+.container {
+  display: grid;
+  grid-template-columns: 300px 300px 300px;
+  grid-gap: 50px;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Baloo Paaji 2', cursive;
+}
+
+.card {
+  background-color: #222831;
+  height: 17rem;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.7);
+  color: white;
+  cursor: pointer;
+}
+
+.card__name {
+  margin-top: 15px;
+  font-size: 1.5em;
+}
+
+.card__image {
+  height: 160px;
+  width: 160px;
+  border-radius: 50%;
+  border: 5px solid #272133;
+  margin-top: 20px;
+  box-shadow: 0 10px 50px rgba(235, 25, 110, 1);
+}
+</style>
+
+<div class="container" 
+x-data="{
+    player: window.ws
+}
+">
+<p x-text="$player" @readystatechange="
+ console.log("alpapie");
+" ></p>
+    <div class="card">
+      <img src="https://lh3.googleusercontent.com/ytP9VP86DItizVX2YNA-xTYzV09IS7rh4WexVp7eilIcfHmm74B7odbcwD5DTXmL0PF42i2wnRKSFPBHlmSjCblWHDCD2oD1oaM1CGFcSd48VBKJfsCi4bS170PKxGwji8CPmehwPw=w200-h247-no" alt="Person" class="card__image">
+      <p class="card__name" >Lily-Grace Colley</p>
     </div>
-    <script>
-        const mainMenuAudio = document.getElementById('mainMenuAudio');
-        document.addEventListener("DOMContentLoaded", () => {
-            mainMenuAudio.volume = 0.5;
-            mainMenuAudio.play().catch(error => {
-                console.error("Erreur de lecture audio:", error);
-            });
-        });
-    </script>
-</body>
-
-</html>
+    
+  </div>
+  

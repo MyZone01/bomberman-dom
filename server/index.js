@@ -1,6 +1,9 @@
 import { Player } from "../shared/models/index.js";
+import { PlayersManager } from "./core/playerManager.js";
 import { uuid } from "./utils/helper.js";
 import WebSocket, { WebSocketServer } from 'ws';
+
+let Players= new PlayersManager()
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -14,13 +17,15 @@ wss.on('connection', function connection(ws) {
     const type = message.type;
     switch (type) {
       case "new-user":
-        const nickname = message.payload
+        const newPlayer = message.payload
         const id = uuid()
-        const player = new Player(id, nickname)
+        const player = new Player(id, newPlayer.name,newPlayer.emoji)
         ws.send(JSON.stringify({
           type: 'create-successfully',
           payload: player
         }))
+        Players.addPlayer(player)
+        console.log("list de player ",Players)
         break;
 
       default:
@@ -28,5 +33,5 @@ wss.on('connection', function connection(ws) {
     }
   });
 
-  ws.send('Hello, Player!');
+
 });

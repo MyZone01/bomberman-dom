@@ -11,8 +11,10 @@ class page extends HTMLElement {
     }
     render(){
         let content= `
-        <div
-  class="player-settings"
+        <a href="#/room">room</a>
+<div
+  class="player-settings" 
+
   x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
@@ -28,11 +30,17 @@ class page extends HTMLElement {
     { name: '🤡', selected: false }
   ],
   namePlayer:'',
-  selectedemoji:''
+  selectedemoji:'',
+  errorform:''
   }"
 >
+  <p  x-text="$errorform" style="color: red;" 
+  @readystatechange="
+ console.log("alpapie");
+"
+  ></p>
     <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
-    <p>Select your player</p>
+    <p >Select your player</p>
     <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
       <div class="emoji-select-wrapper" @click="
       $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
@@ -53,7 +61,25 @@ class page extends HTMLElement {
            name: $namePlayer,
            emoji:$selectedemoji
         }
-        console.log(player);
+        window.ws = new WebSocket('ws://localhost:8080');
+
+        window.ws.onopen = function(event) {
+        console.log('Connected to server',player);
+        window.ws.send(JSON.stringify({
+            type: 'new-user',
+            payload: player
+          }))
+      };
+      window.ws.onmessage = function(event) {
+        let data=JSON.parse(event.data)
+        if (data?.type ==='create-successfully') {
+          location.hash='#/room'
+          window.ws.onmessage =null
+          return
+        }
+        $errorform='connection error'
+      };
+
     ">Start</button>
 </div>
         `;
@@ -62,6 +88,80 @@ class page extends HTMLElement {
     }
 }
 customElements.define('hub-page', page);
+    
+class Roompage extends HTMLElement {
+    constructor() {
+        super();
+        //this.attachShadow({ mode: 'open' });
+        this.props=this.getAttribute("x-props")
+        
+    }
+    connectedCallback(){
+        this.render()
+    }
+    render(){
+        let content= `
+        <style>
+    @import url("https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500&display=swap");
+
+.container {
+  display: grid;
+  grid-template-columns: 300px 300px 300px;
+  grid-gap: 50px;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Baloo Paaji 2', cursive;
+}
+
+.card {
+  background-color: #222831;
+  height: 17rem;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.7);
+  color: white;
+  cursor: pointer;
+}
+
+.card__name {
+  margin-top: 15px;
+  font-size: 1.5em;
+}
+
+.card__image {
+  height: 160px;
+  width: 160px;
+  border-radius: 50%;
+  border: 5px solid #272133;
+  margin-top: 20px;
+  box-shadow: 0 10px 50px rgba(235, 25, 110, 1);
+}
+</style>
+
+<div class="container" 
+x-data="{
+    player: window.ws
+}
+">
+<p x-text="$player" @readystatechange="
+ console.log("alpapie");
+" ></p>
+    <div class="card">
+      <img src="https://lh3.googleusercontent.com/ytP9VP86DItizVX2YNA-xTYzV09IS7rh4WexVp7eilIcfHmm74B7odbcwD5DTXmL0PF42i2wnRKSFPBHlmSjCblWHDCD2oD1oaM1CGFcSd48VBKJfsCi4bS170PKxGwji8CPmehwPw=w200-h247-no" alt="Person" class="card__image">
+      <p class="card__name" >Lily-Grace Colley</p>
+    </div>
+    
+  </div>
+        `;
+        
+        this.innerHTML=content
+    }
+}
+customElements.define('hub-roompage', Roompage);
     
 export default class Router extends HTMLElement {
     constructor() {
@@ -94,6 +194,9 @@ export default class Router extends HTMLElement {
          */
         this.hashChangeListener = event => {
             this.previousRoute = this.route(location.hash, false, event.newURL === event.oldURL)
+            if(window?.hubble){
+                window.hubble.start()
+            }
         }
     }
     connectedCallback() {
@@ -115,7 +218,7 @@ export default class Router extends HTMLElement {
         // escape on route call which is not set by hashchange event and trigger it here, if needed
         if (location.hash !== hash) {
             if (replace) location.replace(hash);
-            return this.previousRoute
+            return this.previousRoutewindow.hubble.start()
         }
         let route
         // find the correct route or do nothing
@@ -150,8 +253,9 @@ export default class Router extends HTMLElement {
      */
     render(component) {
         // clear previous content
-        this.innerHTML = ''
+        this.innerHTML = '' 
         this.appendChild(component)
+        
     }
 }
 customElements.define('hub-router', Router);
@@ -256,7 +360,6 @@ window.hubble = {
       el.innerHTML = '';
 
       const _array = array.replaceAll('$', '');
-      console.log(hubble.data[uuid],_array,hubble.data[uuid][_array]);
       hubble.data[uuid][_array].forEach((_, index) => {
         const templateInstance = document.createElement('template');
         let html = template.replaceAll(new RegExp(item, 'g'), `${array}[${index}]`);

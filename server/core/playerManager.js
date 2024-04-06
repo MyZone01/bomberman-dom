@@ -1,4 +1,4 @@
-class PlayersManager {
+export class PlayersManager {
   constructor() {
     this.players = [];
   }
@@ -11,3 +11,4 @@ class PlayersManager {
     return this.players.find(player => player.id === id);
   }
 }
+

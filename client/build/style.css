@@ -11,6 +11,11 @@ body {
     justify-content: center;
     align-items: center;
 }
+.playererror{
+    color: red;
+    display: block;
+    font-size: larger;
+}
 .player-settings {
     height: 80vh;
     width: 50%;

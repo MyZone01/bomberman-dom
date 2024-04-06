@@ -1,6 +1,7 @@
-
+<a href="#/room">room</a>
 <div
-  class="player-settings"
+  class="player-settings" 
+
   x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
@@ -16,11 +17,17 @@
     { name: '🤡', selected: false }
   ],
   namePlayer:'',
-  selectedemoji:''
+  selectedemoji:'',
+  errorform:''
   }"
 >
+  <p  x-text="$errorform" style="color: red;" 
+  @readystatechange="
+ console.log("alpapie");
+"
+  ></p>
     <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
-    <p>Select your player</p>
+    <p >Select your player</p>
     <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
       <div class="emoji-select-wrapper" @click="
       $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
@@ -41,7 +48,24 @@
            name: $namePlayer,
            emoji:$selectedemoji
         }
-        console.log(player);
-        
+        window.ws = new WebSocket('ws://localhost:8080');
+
+        window.ws.onopen = function(event) {
+        console.log('Connected to server',player);
+        window.ws.send(JSON.stringify({
+            type: 'new-user',
+            payload: player
+          }))
+      };
+      window.ws.onmessage = function(event) {
+        let data=JSON.parse(event.data)
+        if (data?.type ==='create-successfully') {
+          location.hash='#/room'
+          window.ws.onmessage =null
+          return
+        }
+        $errorform='connection error'
+      };
+
     ">Start</button>
 </div>
