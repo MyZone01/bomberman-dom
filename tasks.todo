@@ -23,7 +23,7 @@
 
 ---
 
-+ [ ] **Create the Game Board:**
++ [x] **Create the Game Board:**
   - **Randomly Place Walls:** Generate walls at random positions on the game board.
   - **Randomly Place Blocks:** Generate destructible blocks at random positions on the game board.
   - **Randomly Place Power-Ups:** Place power-up items at random positions on the game board.

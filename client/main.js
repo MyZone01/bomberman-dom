@@ -9,5 +9,4 @@ const connect = () => {
   ws.sendPlayerNickname(nickname.value);
 }
 
-
-document.getElementById("btn-connect").addEventListener("click", connect);
+document.getElementById("btn-connect")?.addEventListener("click", connect);
