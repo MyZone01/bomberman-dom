@@ -95,7 +95,6 @@ window.hubble = {
       if (withIndex.length === 2) {
         item = item.split(', ')[0];
       }
-
       el.innerHTML = '';
 
       const _array = array.replaceAll('$', '');
@@ -114,7 +113,8 @@ window.hubble = {
     }
   },
   start() {
-    this.data=[]
+    this.data = []
+    this.init = true
     const dataElements = document.querySelectorAll('[x-data]');
 
     dataElements.forEach((element) => {
