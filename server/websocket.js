@@ -7,7 +7,7 @@ export function register(message, ws, PlayersManage) {
       return
     }
     if (PlayersManage.getPlayerByname(newPlayer?.name)) {
-      sendMessage(ws,"Only 4 users are authorized to play the game","not-authorise")
+      sendMessage(ws,"username alredy existe. Chose an other","not-authorise")
       return
     }
     const id = crypto.randomUUID();

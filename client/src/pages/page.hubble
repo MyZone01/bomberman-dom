@@ -1,192 +1,201 @@
 <style>
-
   .container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      height: 100%;
-      width: 80VW;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    width: 80vw;
   }
-  .infos{
-      display: grid;
-      grid-template-columns:  40% 59%;
-      grid-gap: 10px
+  .infos {
+    display: grid;
+    grid-template-columns: 40% 59%;
+    grid-gap: 10px;
   }
   .players {
-      display: grid;
-      gap: 2px;
+    display: grid;
+    gap: 2px;
   }
   .player span {
-      font-size: 3rem;
+    font-size: 3rem;
   }
   .player {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: black;
-      color: white;
-      border-radius: 20px;
-      padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    border-radius: 20px;
+    padding: 8px;
   }
+
   /*Chat*/
   .chat {
-      overflow: hidden;
-      box-shadow: 0 5px 30px rgba(0, 0, 0, .2);
-      background: var(--primary);
-      border-radius: 20px;
-      display: flex;
-      justify-content: space-between;
-      flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+    background: var(--primary);
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
   }
   .messages {
-      flex: 1 1 auto;
-      color: black;
-      overflow: hidden;
-      position: relative;
-      width: 100%;
+    flex: 1 1 auto;
+    color: black;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    min-height: 50vh;
   }
   .messages .messages-content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
   }
   .messages-content {
-      overflow-y: scroll;
-      padding: 2px;
+    overflow-y: scroll;
+    padding: 2px;
   }
   .messages .message {
-      clear: both;
-      float: left;
-      padding: 6px 10px 7px;
-      border-radius: 10px 10px 10px 0;
-      background: white;
-      margin: 8px 0;
-      font-size: 11px;
-      line-height: 1.4;
-      position: relative;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    clear: both;
+    float: left;
+    padding: 6px 10px 7px;
+    border-radius: 10px 10px 10px 0;
+    background: white;
+    margin: 8px 0;
+    font-size: 11px;
+    line-height: 1.4;
+    position: relative;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+  .received {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .avatar {
+    font-size: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.24);
+    border-radius: 30px;
+    background-color: orange;
+    padding: 5px;
   }
   .messages .message .timestamp {
-      bottom: -15px;
-      font-size: 9px;
-      color: rgba(255, 255, 255, .3);
-      text-align: right;
+    bottom: -15px;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.3);
+    text-align: right;
   }
   .messages .message::before {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      border-top: 6px solid rgba(0, 0, 0, .3);
-      left: 0;
-      border-right: 7px solid transparent;
-  }
-  .messages .message .avatar img {
-      width: 100%;
-      height: auto;
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    border-top: 6px solid white;
+    left: 0;
+    border-right: 7px solid transparent;
   }
   .messages .message.message-personal {
-      float: right;
-      color: var(--white);
-      background: var(--tertiary);
-      border-radius: 10px 10px 0 10px;
+    float: right;
+    color: var(--white);
+    background: var(--tertiary);
+    border-radius: 10px 10px 0 10px;
   }
   .messages .message.message-personal::before {
-      left: auto;
-      right: 0;
-      border-right: none;
-      border-left: 5px solid transparent;
-      border-top: 4px solid var(--tertiary);
-      bottom: -4px;
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 5px solid transparent;
+    border-top: 4px solid var(--tertiary);
+    bottom: -4px;
   }
   .messages .message:last-child {
-      margin-bottom: 30px;
+    margin-bottom: 30px;
   }
   .messages .message.new {
-      transform: scale(0);
-      transform-origin: 0 0;
-      animation: bounce 500ms linear both;
-      white-space: pre-wrap;
-      max-width: 70%;
-      word-wrap: break-word;
+    transform-origin: 0 0;
+    animation: bounce 500ms linear both;
+    white-space: pre-wrap;
+    max-width: 70%;
+    word-wrap: break-word;
   }
   .message-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px;
-      background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    background: rgba(0, 0, 0, 0.3);
   }
   .message-box .message-input {
-      border-radius: 10px;
-      outline: none !important;
-      resize: none;
-      color: var(--white);
-      width: 80%;
-      margin: 4px;
+    border-radius: 10px;
+    background-color: var(--primary);
+    outline: none !important;
+    resize: none;
+    color: var(--white);
+    width: 80%;
+    margin: 4px;
   }
   .message-box textarea:focus:-webkit-placeholder {
-      color: transparent;
+    color: transparent;
   }
   .message-box .message-submit {
-      border-radius: 10px;
-      padding: 5px;
-      height: 70%;
+    border-radius: 10px;
+    padding: 5px;
+    height: 70%;
   }
   .message-box .message-submit:hover {
-      background: orange;
+    background: orange;
   }
   /*-------------------- Custom Srollbar --------------------*/
   ::-webkit-scrollbar {
-      width: 3px;
-      border-radius: 10px;
-      /* Largeur de la scrollbar */
+    width: 3px;
+    border-radius: 10px;
+    /* Largeur de la scrollbar */
   }
   ::-webkit-scrollbar-thumb {
-      background: orange;
-      /* Couleur de fond du thumb de la scrollbar */
+    background: orange;
+    /* Couleur de fond du thumb de la scrollbar */
   }
   ::-webkit-scrollbar-thumb:hover {
-      background: white;
-      /* Couleur de fond du thumb de la scrollbar au survol */
+    background: white;
+    /* Couleur de fond du thumb de la scrollbar au survol */
   }
   /*Counter*/
-  .counter{
-      display: flex;
-      justify-content: center;
+  .counter {
+    display: flex;
+    justify-content: center;
   }
   .counter-box {
-      display: grid;
-      height: 10%;
-      width: 15%;
-      text-align: center;
-      border: solid 5px orange;
-      border-radius: 5px;
-      background-color: black;
+    display: grid;
+    height: 10%;
+    width: 15%;
+    text-align: center;
+    border: solid 5px orange;
+    border-radius: 5px;
+    background-color: black;
   }
   .chrono {
-      font-size: 2rem;
-      color: white;
-      display: block;
-      padding: 10px;
+    font-size: 2rem;
+    color: white;
+    display: block;
+    padding: 10px;
   }
   .beat {
-      animation: beat 1s;
-      animation-iteration-count: infinite;
+    animation: beat 1s;
+    animation-iteration-count: infinite;
   }
   @keyframes beat {
-      from {
-          transform: scale(1);
-      }
-      to {
-          transform: scale(1.5);
-      }
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.5);
+    }
   }
-  </style>
+</style>
 <main
-x-data="{emojis:[
+  x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
     { name: '😱', selected: false },
@@ -206,29 +215,38 @@ x-data="{emojis:[
   isconecte:false,
   players:[],
   messages:[],
-  inputData : ''
+  inputData : '',
+  currentP:''
 }"
 >
-    <div class="player-settings" x-if="!$isconecte" >
-      <p  x-text="$errorform" style="color: red;" ></p>
-        <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
-        <p >Select your player</p>
-        <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
-          <div class="emoji-select-wrapper" @click="
+  <div class="player-settings" x-if="!$isconecte">
+    <p x-text="$errorform" style="color: red"></p>
+    <input type="text" placeholder="Player Name" x-model="$namePlayer" />
+    <p>Select your player</p>
+    <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
+      <div
+        class="emoji-select-wrapper"
+        @click="
           $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
           $selectedemoji=emojiItem.name
-          " >
-            <div class="select-emoji selected" x-if="emojiItem.selected"><span x-text="emojiItem.name"></span>
-                <div class="sun">
-                    <div class="ray"></div>
-                    <div class="ray"></div>
-                    <div class="ray"></div>
-                </div>
-            </div>
-            <div class="select-emoji" x-else ><span x-text="emojiItem.name"></span></div>
+          "
+      >
+        <div class="select-emoji selected" x-if="emojiItem.selected">
+          <span x-text="emojiItem.name"></span>
+          <div class="sun">
+            <div class="ray"></div>
+            <div class="ray"></div>
+            <div class="ray"></div>
           </div>
         </div>
-        <button id="starttest" @click="
+        <div class="select-emoji" x-else>
+          <span x-text="emojiItem.name"></span>
+        </div>
+      </div>
+    </div>
+    <button
+      id="starttest"
+      @click="
             if($namePlayer && $selectedemoji){
               let player={
                 name: $namePlayer,
@@ -247,18 +265,19 @@ x-data="{emojis:[
                 let data=JSON.parse(event.data)
                 if (data?.type ==='create-successfully') {
                   $isconecte=true
-                
-                  $messages=[...$messages,...data?.payload?.messages]
+                  $messages=data?.payload?.messages|| []
                   window.currentPId=data?.payload?.id
+                  $currentP=data?.payload?.id
                   return
                 }
                 if (data?.type ==='chat'){
-                  $messages=[...$messages,data?.payload?.player]
+                  $messages=data?.payload?.messages || []
+                  console.log('messages ',$messages);
                   return
                 }
                 if (data?.type ==='new-player'){
                   $players=data?.payload?.players
-                  console.log($players);
+                  console.log('new player',$players);
                   return
                 }
                 window.ws=null
@@ -268,48 +287,68 @@ x-data="{emojis:[
             }
             $errorform='A name and a emoji is needed'
 
-        ">Start</button>
-    </div>
+        "
+    >
+      Start
+    </button>
+  </div>
 
-    <div class="container" x-else>
-      <div class="counter">
-          <div class="counter-box">
-              <span class="chrono" id="chrono">20</span>
-          </div>
-      </div>
-      <div class="infos">
-          <div class="players" x-for="playerItem, key in $players">
-              <div class="player">
-                  <span x-text="playerItem.emoji"></span>
-                  <p x-text="playerItem.nickname"></p>
-              </div>
-              
-          </div>
-          <div class="chat">
-              <div class="messages">
-                  <div class="messages-content">
-                   <div class="message">
-                        <p class="emoji"></p>
-                        <h3></h3>
-                   </div>
-    
-                  </div>
-              </div>
-              <div class="message-box">
-                  <input type="text"value="" class="message-input" placeholder="Type message..." x-model="$inputData" 
-                  @keyup.enter="
-                    let message={
-                      content: $inputData,
-                      userId:window.currentPId
-                    }
-                    window.ws.send(JSON.stringify({
-                        type: 'chat',
-                        payload: message
-                    }))"
-                  />
-                  <!-- <button type="submit" class="message-submit">Send</button> -->
-              </div>
-          </div>
+  <div class="container" x-else>
+    <div class="counter">
+      <div class="counter-box">
+        <span class="chrono" id="chrono">20</span>
       </div>
     </div>
+    <div class="infos">
+      <div class="players" x-for="playerItem, key in $players">
+        <div class="player">
+          <span x-text="playerItem.emoji"></span>
+          <p x-text="playerItem.nickname"></p>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="messages">
+          <div class="messages-content"
+          x-for=" messagePlayer ,key in $messages"
+          >
+            <div class="received" x-if="messagePlayer.player.id!==$currentP">
+              <span class="avatar"  x-text="messagePlayer.player.emoji"></span>
+              <div class="message new">
+                <span x-text="messagePlayer.content"></span>
+                <div class="sender">by @<span x-text="messagePlayer.player.nickname"></span></div>
+              </div>
+            </div>
+            <div class="message new message-personal" x-else>
+              <span class="avatar" x-text="messagePlayer.player.emoji"></span>
+              <div class="message new">
+                <span x-text="messagePlayer.content"></span>
+                <div class="sender">by @ <span x-text="messagePlayer.player.nickname"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="message-box">
+          <input
+            type="text"
+            value=""
+            class="message-input"
+            placeholder="Type message..."
+            x-model="$inputData"
+            @keyup.enter="
+              let message={
+                content: $inputData,
+                userId: window.currentPId
+              }
+
+              window.ws.send(JSON.stringify({
+                  type: 'chat',
+                  payload: message
+              }))
+          "
+          />
+          <!-- <button type="submit" class="message-submit">Send</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
 </main>

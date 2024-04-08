@@ -20,14 +20,16 @@ wss.on('connection', function connection(ws) {
           register(message, ws,PlayersManage);
           wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {     // check if client is ready
-             sendMessage(client,{players:PlayersManage.players},"new-player")
+              sendMessage(client,{players:PlayersManage.players},"new-player")
             }
-        })
+          })
+          sendMessage(ws,{messages:Messages},"chat")
         break;
       case "chat":
         let player=PlayersManage.getPlayerById(message.payload.userId)
         Messages.push(chat(ws,message?.payload,player)) 
-        console.log(Messages);
+        sendMessage(ws,{messages:Messages},"chat")
+        console.log("new message ",Messages,player);
         break
       default:
         break;
