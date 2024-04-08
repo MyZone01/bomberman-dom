@@ -24,11 +24,6 @@ export default class Game {
           cellClass = 'block';
         } else {
           cellClass = 'wall';
-          if (Math.random() < 0.4) {
-            const powerUpTypes = ['X', 'S', 'M'];
-            const randomPowerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
-            board[i][j] = randomPowerUp;
-          }
         }
 
         cell.classList.add(cellClass);
@@ -42,19 +37,62 @@ export default class Game {
 
     this.gameBoard.appendChild(fragment);
     this.gameBoard.style.setProperty('display', "grid");
-    console.log(document.getElementById("hud"));
     document.getElementById("hud").style.setProperty('display', "none");
   }
 
   placePlayer(players) {
     players.forEach(player => {
-      const element = document.createElement("div");
-      element.innerHTML = player.avatar;
-      element.classList.add("player");
-      element.setAttribute("id", player.id);
-      element.style.gridRowStart = player.position.y;
-      element.style.gridColumnStart = player.position.x;
-      this.gameBoard.appendChild(element)
+      const exist = document.getElementById(player.id);
+      if (!exist) {
+        const element = document.createElement("div");
+        element.innerHTML = player.avatar;
+        element.classList.add("player");
+        element.setAttribute("id", player.id);
+        element.style.gridRowStart = player.position.y;
+        element.style.gridColumnStart = player.position.x;
+        this.gameBoard.appendChild(element)
+      }
+    });
+  }
+
+  movePlayer(id, position, direction) {
+    const element = document.getElementById(id);
+
+    const translateX = element.clientWidth * direction.x;
+    const translateY = element.clientHeight * direction.y;
+    element.style.setProperty('--translate-x', `${translateX}px`);
+    element.style.setProperty('--translate-y', `${translateY}px`);
+
+    element.style.animationName = "movePlayer";
+    element.style.animationFillMode = "forwards";
+    element.style.animationDuration = "0.125s";
+
+    element.addEventListener('animationend', () => {
+      element.style.gridRowStart = position.y;
+      element.style.gridColumnStart = position.x;
+      element.style.animationName = "none";
+    }, { once: true });
+  }
+
+  handleKeyPress(sendPlayerMove) {
+    window.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+          sendPlayerMove({ x: 0, y: -1 });
+          break;
+        case "ArrowDown":
+          sendPlayerMove({ x: 0, y: 1 });
+          break;
+        case "ArrowLeft":
+          sendPlayerMove({ x: -1, y: 0 });
+          break;
+        case "ArrowRight":
+          sendPlayerMove({ x: 1, y: 0 });
+          break;
+        case " ":
+          this.addBomb = true;
+          break;
+      }
     });
   }
 }

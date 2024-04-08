@@ -3,6 +3,8 @@ import Game from "./core/game.js";
 
 const game = new Game();
 const ws = new SocketHandler(game);
+window.game = game;
+window.ws = ws;
 
 const connectPlayer = () => {
   let nickname = document.getElementById("nickname")

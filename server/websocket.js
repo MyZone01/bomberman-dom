@@ -35,6 +35,9 @@ export default class SocketHandler {
       case "start-game":
         this.initGame(message);
         break;
+      case 'player-move':
+        this.movePlayer(message);
+        break;
       default:
         break;
     }
@@ -54,6 +57,27 @@ export default class SocketHandler {
     }
   }
 
+  movePlayer(message) {
+    const access = message.payload.access;
+    const direction = message.payload.direction;
+    const client = this.clients.get(access);
+    if (client) {
+      const { position, id } = this.game.movePlayer(access, direction);
+      if (position) {
+        this.clients.forEach((c) => {
+          c.send(JSON.stringify({
+            type: 'player-move',
+            payload: {
+              id,
+              position,
+              direction
+            }
+          }));
+        });
+      }
+    }
+  }
+
   initGame(message) {
     const access = message.payload.access;
     const client = this.clients.get(access);
@@ -69,5 +93,9 @@ export default class SocketHandler {
         }));
       });
     }
+  }
+
+  runGame() {
+    this.game.startGameLoop();
   }
 }

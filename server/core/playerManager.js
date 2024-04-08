@@ -10,4 +10,8 @@ export default class PlayersManager {
   getPlayerById(id) {
     return this.players.find(player => player.id === id);
   }
+
+  getPlayerByAccess(access) {
+    return this.players.find(player => player.access === access);
+  }
 }

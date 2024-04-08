@@ -20,6 +20,26 @@ export default class Game {
     return this.boardManager.board
   }
 
+  startGameLoop() {
+
+  }
+
+  movePlayer(access, direction) {
+    const player = this.playerManager.getPlayerByAccess(access);
+
+    if (player) {
+      const newPosition = {
+        x: player.position.x + direction.x,
+        y: player.position.y + direction.y
+      }
+      if (this.boardManager.isValidMove(newPosition)) {
+        player.move(direction, newPosition);
+        return { id: player.id, position: newPosition };
+      }
+    }
+    return { id: player.id, position: null };
+  }
+
   addPlayer(access, nickname) {
     const id = 'player-' + this.numberOfPlayer;
     const position = playerDefaultPosition[this.numberOfPlayer];
@@ -28,6 +48,10 @@ export default class Game {
     const player = new Player(id, access, nickname, position, avatar);
     this.playerManager.addPlayer(player)
     return player;
+  }
+
+  getPlayerByAccess(access) {
+    return this.playerManager.getPlayerByAccess(access);
   }
 
   players() {

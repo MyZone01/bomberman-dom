@@ -1,6 +1,5 @@
 export default class SocketHandler {
-  constructor(game) {
-    const self = this;
+  constructor(game, callback) {
     this.game = game
     this.ws = new WebSocket('ws://localhost:8080');
     this.ws.addEventListener('open', function () {
@@ -9,7 +8,12 @@ export default class SocketHandler {
     this.ws.addEventListener('error', function (event) {
       console.error('WebSocket error:', event);
     });
-    this.handleMessage = this.handleMessage.bind(this);
+    // bind this for all methods with a loop
+    for (let key of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
+      if (typeof this[key] === 'function') {
+        this[key] = this[key].bind(this);
+      }
+    }
     this.ws.addEventListener('message', this.handleMessage);
   }
 
@@ -21,6 +25,7 @@ export default class SocketHandler {
     switch (type) {
       case "connection-success":
         this.game.playAccess = message.payload.access;
+        JustForDevMode();
         break;
       case 'create-player-success':
         const player = message.payload;
@@ -31,10 +36,30 @@ export default class SocketHandler {
         const players = message.payload.players;
         this.game.createGameBoard(board);
         this.game.placePlayer(players);
+        this.game.handleKeyPress(this.sendPlayerMove);
+        break;
+      case 'player-move':
+        const id = message.payload.id;
+        const position = message.payload.position;
+        const direction = message.payload.direction;
+
+        if (position) {
+          this.game.movePlayer(id, position, direction);
+        }
         break;
       default:
         break;
     }
+  }
+
+  sendPlayerMove(direction) {
+    this.ws.send(JSON.stringify({
+      type: 'player-move',
+      payload: {
+        access: this.game.playAccess,
+        direction
+      }
+    }));
   }
 
   sendPlayerNickname(nickname) {
@@ -55,4 +80,13 @@ export default class SocketHandler {
       }
     }));
   }
+}
+
+/// JUST FOR DEV MODE
+const JustForDevMode = () => {
+  document.getElementById('nickname').value = 'Player' + Math.floor(Math.random() * 1000);
+  document.getElementById('btn-connect').click();
+  setTimeout(() => {
+    document.getElementById('btn-start').click();
+  }, 1000);
 }
