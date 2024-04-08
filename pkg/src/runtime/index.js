@@ -194,3 +194,14 @@ const createUUID = () => {
 }
 
 window.hubble.start()
+
+function triggerDivLoadedEvent(div) {
+  var event = new CustomEvent('divLoaded', {
+      bubbles: true,  
+      detail: { 
+          message: 'Le div est chargé !'
+      }
+  });
+  console.log("div load",event)
+  div.dispatchEvent(event); 
+}

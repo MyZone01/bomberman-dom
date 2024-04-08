@@ -11,11 +11,195 @@ class page extends HTMLElement {
     }
     render(){
         let content= `
-        <a href="#/room">room</a>
-<div
-  class="player-settings" 
+        <style>
 
-  x-data="{emojis:[
+  .container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      height: 100%;
+      width: 80VW;
+  }
+  .infos{
+      display: grid;
+      grid-template-columns:  40% 59%;
+      grid-gap: 10px
+  }
+  .players {
+      display: grid;
+      gap: 2px;
+  }
+  .player span {
+      font-size: 3rem;
+  }
+  .player {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      color: white;
+      border-radius: 20px;
+      padding: 8px;
+  }
+  /*Chat*/
+  .chat {
+      overflow: hidden;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, .2);
+      background: var(--primary);
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+  }
+  .messages {
+      flex: 1 1 auto;
+      color: black;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+  }
+  .messages .messages-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+  }
+  .messages-content {
+      overflow-y: scroll;
+      padding: 2px;
+  }
+  .messages .message {
+      clear: both;
+      float: left;
+      padding: 6px 10px 7px;
+      border-radius: 10px 10px 10px 0;
+      background: white;
+      margin: 8px 0;
+      font-size: 11px;
+      line-height: 1.4;
+      position: relative;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  }
+  .messages .message .timestamp {
+      bottom: -15px;
+      font-size: 9px;
+      color: rgba(255, 255, 255, .3);
+      text-align: right;
+  }
+  .messages .message::before {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      border-top: 6px solid rgba(0, 0, 0, .3);
+      left: 0;
+      border-right: 7px solid transparent;
+  }
+  .messages .message .avatar img {
+      width: 100%;
+      height: auto;
+  }
+  .messages .message.message-personal {
+      float: right;
+      color: var(--white);
+      background: var(--tertiary);
+      border-radius: 10px 10px 0 10px;
+  }
+  .messages .message.message-personal::before {
+      left: auto;
+      right: 0;
+      border-right: none;
+      border-left: 5px solid transparent;
+      border-top: 4px solid var(--tertiary);
+      bottom: -4px;
+  }
+  .messages .message:last-child {
+      margin-bottom: 30px;
+  }
+  .messages .message.new {
+      transform: scale(0);
+      transform-origin: 0 0;
+      animation: bounce 500ms linear both;
+      white-space: pre-wrap;
+      max-width: 70%;
+      word-wrap: break-word;
+  }
+  .message-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      background: rgba(0, 0, 0, 0.3);
+  }
+  .message-box .message-input {
+      border-radius: 10px;
+      outline: none !important;
+      resize: none;
+      color: var(--white);
+      width: 80%;
+      margin: 4px;
+  }
+  .message-box textarea:focus:-webkit-placeholder {
+      color: transparent;
+  }
+  .message-box .message-submit {
+      border-radius: 10px;
+      padding: 5px;
+      height: 70%;
+  }
+  .message-box .message-submit:hover {
+      background: orange;
+  }
+  /*-------------------- Custom Srollbar --------------------*/
+  ::-webkit-scrollbar {
+      width: 3px;
+      border-radius: 10px;
+      /* Largeur de la scrollbar */
+  }
+  ::-webkit-scrollbar-thumb {
+      background: orange;
+      /* Couleur de fond du thumb de la scrollbar */
+  }
+  ::-webkit-scrollbar-thumb:hover {
+      background: white;
+      /* Couleur de fond du thumb de la scrollbar au survol */
+  }
+  /*Counter*/
+  .counter{
+      display: flex;
+      justify-content: center;
+  }
+  .counter-box {
+      display: grid;
+      height: 10%;
+      width: 15%;
+      text-align: center;
+      border: solid 5px orange;
+      border-radius: 5px;
+      background-color: black;
+  }
+  .chrono {
+      font-size: 2rem;
+      color: white;
+      display: block;
+      padding: 10px;
+  }
+  .beat {
+      animation: beat 1s;
+      animation-iteration-count: infinite;
+  }
+  @keyframes beat {
+      from {
+          transform: scale(1);
+      }
+      to {
+          transform: scale(1.5);
+      }
+  }
+  </style>
+<main
+x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
     { name: '😱', selected: false },
@@ -31,59 +215,117 @@ class page extends HTMLElement {
   ],
   namePlayer:'',
   selectedemoji:'',
-  errorform:''
-  }"
+  errorform:'',
+  isconecte:false,
+  players:[],
+  messages:[],
+  inputData : ''
+}"
 >
-  <p  x-text="$errorform" style="color: red;" 
-  @readystatechange="
- console.log("alpapie");
-"
-  ></p>
-    <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
-    <p >Select your player</p>
-    <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
-      <div class="emoji-select-wrapper" @click="
-      $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
-      $selectedemoji=emojiItem.name
-      " >
-        <div class="select-emoji selected" x-if="emojiItem.selected"><span x-text="emojiItem.name"></span>
-            <div class="sun">
-                <div class="ray"></div>
-                <div class="ray"></div>
-                <div class="ray"></div>
+    <div class="player-settings" x-if="!$isconecte" >
+      <p  x-text="$errorform" style="color: red;" ></p>
+        <input type="text" placeholder="Player Name" x-model="$namePlayer"/>
+        <p >Select your player</p>
+        <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
+          <div class="emoji-select-wrapper" @click="
+          $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
+          $selectedemoji=emojiItem.name
+          " >
+            <div class="select-emoji selected" x-if="emojiItem.selected"><span x-text="emojiItem.name"></span>
+                <div class="sun">
+                    <div class="ray"></div>
+                    <div class="ray"></div>
+                    <div class="ray"></div>
+                </div>
             </div>
+            <div class="select-emoji" x-else ><span x-text="emojiItem.name"></span></div>
+          </div>
         </div>
-        <div class="select-emoji" x-else ><span x-text="emojiItem.name"></span></div>
+        <button id="starttest" @click="
+            if($namePlayer && $selectedemoji){
+              let player={
+                name: $namePlayer,
+                emoji:$selectedemoji
+              }
+              window.ws = new WebSocket('ws://localhost:8080');
+      
+              window.ws.onopen = function(event) {
+              console.log('Connected to server',player);
+              window.ws.send(JSON.stringify({
+                  type: 'new-user',
+                  payload: player
+                }))
+              };
+              window.ws.onmessage = function(event) {
+                let data=JSON.parse(event.data)
+                if (data?.type ==='create-successfully') {
+                  $isconecte=true
+                  $players=data?.payload?.players
+                  $messages=[...$messages,...data?.payload?.messages]
+                  window.currentPId=data?.payload?.id
+                  return
+                }
+                if (data?.type ==='chat'){
+                  $messages=[...$messages,data?.payload?.player]
+                  return
+                }
+                if (data?.type ==='new-player'){
+                  $players=[...$players,data?.payload?.player]
+                  console.log($players);
+                  return
+                }
+                window.ws=null
+                $errorform=data?.payload
+                return
+              };
+            }
+            $errorform='A name and a emoji is needed'
+
+        ">Start</button>
+    </div>
+
+    <div class="container" x-else>
+      <div class="counter">
+          <div class="counter-box">
+              <span class="chrono" id="chrono">20</span>
+          </div>
+      </div>
+      <div class="infos">
+          <div class="players" x-for="playerItem, key in $players">
+              <div class="player">
+                  <span x-text="playerItem.emoji"></span>
+                  <p x-text="playerItem.nickname"></p>
+              </div>
+              
+          </div>
+          <div class="chat">
+              <div class="messages">
+                  <div class="messages-content">
+                   <div class="message">
+                        <p class="emoji"></p>
+                        <h3></h3>
+                   </div>
+    
+                  </div>
+              </div>
+              <div class="message-box">
+                  <input type="text"value="" class="message-input" placeholder="Type message..." x-model="$inputData" 
+                  @keyup.enter="
+                    let message={
+                      content: $inputData,
+                      userId:window.currentPId
+                    }
+                    window.ws.send(JSON.stringify({
+                        type: 'chat',
+                        payload: message
+                    }))"
+                  />
+                  <!-- <button type="submit" class="message-submit">Send</button> -->
+              </div>
+          </div>
       </div>
     </div>
-    <button id="starttest" @click="
-        let player={
-           name: $namePlayer,
-           emoji:$selectedemoji
-        }
-        window.ws = new WebSocket('ws://localhost:8080');
-
-        window.ws.onopen = function(event) {
-        console.log('Connected to server',player);
-        window.ws.send(JSON.stringify({
-            type: 'new-user',
-            payload: player
-          }))
-      };
-      window.ws.onmessage = function(event) {
-        let data=JSON.parse(event.data)
-        if (data?.type ==='create-successfully') {
-          location.hash='#/room'
-          window.players=data?.payload
-          window.ws.onmessage =null
-          return
-        }
-        window.ws=null
-        $errorform=data?.payload
-      };
-
-    ">Start</button>
-</div>
+</main>
         `;
         
         this.innerHTML=content
@@ -105,25 +347,12 @@ class Roompage extends HTMLElement {
         let content= `
         <style>
 
-:root {
-    --primary: black;
-    --secondary: #120d14;
-    --tertiary: orange;
-    --white: #fff;
-    --hover: #c3b1bd;
-    --background: #fcfcfc;
-    --text-color: #b7c2d4;
-    --shadow-color: rgba(195, 177, 189, 0.5);
-    --font1: "Nova Square"
-        --dot-width: 10px;
-    --dot-color: #c3b1bd;
-    --speed: 1.5s;
-}
 .container {
     display: flex;
     flex-direction: column;
     gap: 15px;
     height: 100%;
+    width: 80VW;
 }
 .infos{
     display: grid;
@@ -239,7 +468,6 @@ class Roompage extends HTMLElement {
 }
 .message-box .message-input {
     border-radius: 10px;
-    background-color: var(--primary);
     outline: none !important;
     resize: none;
     color: var(--white);
@@ -313,31 +541,36 @@ class Roompage extends HTMLElement {
       </div>
   </div>
   <div class="infos">
-      <div class="players">
+      <div class="players" x-for="playerItem, key in players">
           <div class="player">
-              <span>😁</span>
-              <p>Player 1</p>
+              <span x-text="playerItem.emoji"></span>
+              <p x-text="playerItem.nickname"></p>
           </div>
-          <div class="player">
-              <span>😡</span>
-              <p>Player 2</p>
-          </div>
-          <div class="player">
-              <span>😎</span>
-              <p>Player 3</p>
-          </div>
-          <div class="player">
-              <span>👽</span>
-              <p>Player 4</p>
-          </div>
+          
       </div>
       <div class="chat">
           <div class="messages">
-              <div class="messages-content"></div>
+              <div class="messages-content">
+               <div class="message">
+                    <p class="emoji"></p>
+                    <h3></h3>
+               </div>
+
+              </div>
           </div>
           <div class="message-box">
-              <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
-              <button type="submit" class="message-submit">Send</button>
+              <input type="text"value="" class="message-input" placeholder="Type message..." x-model="$inputData" 
+              @keyup.enter="
+                let message={
+                  content: $inputData,
+                  userId:window.currentPId
+                }
+                window.ws.send(JSON.stringify({
+                    type: 'chat',
+                    payload: message
+                }))"
+              />
+              <!-- <button type="submit" class="message-submit">Send</button> -->
           </div>
       </div>
   </div>
@@ -638,3 +871,14 @@ const createUUID = () => {
 }
 
 window.hubble.start()
+
+function triggerDivLoadedEvent(div) {
+  var event = new CustomEvent('divLoaded', {
+      bubbles: true,  
+      detail: { 
+          message: 'Le div est chargé !'
+      }
+  });
+  console.log("div load",event)
+  div.dispatchEvent(event); 
+}

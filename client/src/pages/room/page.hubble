@@ -1,24 +1,11 @@
 <style>
 
-:root {
-    --primary: black;
-    --secondary: #120d14;
-    --tertiary: orange;
-    --white: #fff;
-    --hover: #c3b1bd;
-    --background: #fcfcfc;
-    --text-color: #b7c2d4;
-    --shadow-color: rgba(195, 177, 189, 0.5);
-    --font1: "Nova Square"
-        --dot-width: 10px;
-    --dot-color: #c3b1bd;
-    --speed: 1.5s;
-}
 .container {
     display: flex;
     flex-direction: column;
     gap: 15px;
     height: 100%;
+    width: 80VW;
 }
 .infos{
     display: grid;
@@ -134,7 +121,6 @@
 }
 .message-box .message-input {
     border-radius: 10px;
-    background-color: var(--primary);
     outline: none !important;
     resize: none;
     color: var(--white);
@@ -208,31 +194,36 @@
       </div>
   </div>
   <div class="infos">
-      <div class="players">
+      <div class="players" x-for="playerItem, key in players">
           <div class="player">
-              <span>😁</span>
-              <p>Player 1</p>
+              <span x-text="playerItem.emoji"></span>
+              <p x-text="playerItem.nickname"></p>
           </div>
-          <div class="player">
-              <span>😡</span>
-              <p>Player 2</p>
-          </div>
-          <div class="player">
-              <span>😎</span>
-              <p>Player 3</p>
-          </div>
-          <div class="player">
-              <span>👽</span>
-              <p>Player 4</p>
-          </div>
+          
       </div>
       <div class="chat">
           <div class="messages">
-              <div class="messages-content"></div>
+              <div class="messages-content">
+               <div class="message">
+                    <p class="emoji"></p>
+                    <h3></h3>
+               </div>
+
+              </div>
           </div>
           <div class="message-box">
-              <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
-              <button type="submit" class="message-submit">Send</button>
+              <input type="text"value="" class="message-input" placeholder="Type message..." x-model="$inputData" 
+              @keyup.enter="
+                let message={
+                  content: $inputData,
+                  userId:window.currentPId
+                }
+                window.ws.send(JSON.stringify({
+                    type: 'chat',
+                    payload: message
+                }))"
+              />
+              <!-- <button type="submit" class="message-submit">Send</button> -->
           </div>
       </div>
   </div>
