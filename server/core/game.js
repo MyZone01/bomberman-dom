@@ -1,4 +1,5 @@
 import BoardManager from "./boardManager.js";
+import BombManager from "./bombManager.js";
 import PlayerManager from "./playerManager.js";
 import Player from "../../shared/models/player.js";
 
@@ -11,7 +12,8 @@ const playerDefaultPosition = [
 
 export default class Game {
   constructor() {
-    this.numberOfPlayer = 0
+    this.numberOfPlayer = 0;
+    this.bombManager = new BombManager();
     this.playerManager = new PlayerManager();
     this.boardManager = new BoardManager();
   }
@@ -22,6 +24,16 @@ export default class Game {
 
   startGameLoop() {
 
+  }
+
+  addPlayer(access, nickname) {
+    const id = 'player-' + this.numberOfPlayer;
+    const position = playerDefaultPosition[this.numberOfPlayer];
+    const avatar = ['😆', '🤢', '😡', '🥶'][this.numberOfPlayer];
+    this.numberOfPlayer++;
+    const player = new Player(id, access, nickname, position, avatar);
+    this.playerManager.addPlayer(player)
+    return player;
   }
 
   movePlayer(access, direction) {
@@ -40,16 +52,6 @@ export default class Game {
     return { id: player.id, position: null };
   }
 
-  addPlayer(access, nickname) {
-    const id = 'player-' + this.numberOfPlayer;
-    const position = playerDefaultPosition[this.numberOfPlayer];
-    const avatar = ['😆', '🤢', '😡', '🥶'][this.numberOfPlayer];
-    this.numberOfPlayer++;
-    const player = new Player(id, access, nickname, position, avatar);
-    this.playerManager.addPlayer(player)
-    return player;
-  }
-
   getPlayerByAccess(access) {
     return this.playerManager.getPlayerByAccess(access);
   }
@@ -62,5 +64,85 @@ export default class Game {
         position: player.position
       }
     });
+  }
+
+  addBomb(access, sendExplodeBomb) {
+    const player = this.playerManager.getPlayerByAccess(access);
+    if (player && player.availableBombs > 0) {
+      const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
+      this.boardManager.setCell(player.position, "B");
+      player.availableBombs--;
+      if (player.currentBombType === "manual") {
+        this.bombManager.makeManual(bomb.id)
+      } else {
+        setTimeout(() => {
+          sendExplodeBomb(bomb, { x: bomb.x, y: bomb.y });
+          this.bombManager.removeBomb(bomb.id);
+          this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V");
+
+          setTimeout(() => {
+            console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
+            player.availableBombs = player.bombAmount;
+
+            let keepUpDirection = true;
+            let keepDownDirection = true;
+            let keepLeftDirection = true;
+            let keepRightDirection = true;
+
+            for (let i = 1; i <= bomb.explosionRadius; i++) {
+              if (keepUpDirection) {
+                const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y - i });
+                keepUpDirection = isWall(cell); // Up
+                if (keepUpDirection) {
+                  this.boardManager.removeWall({ x: bomb.x, y: bomb.y - i })
+                }
+              }
+              if (keepDownDirection) {
+                const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y + i });
+                keepDownDirection = isWall(cell); // Down
+                if (keepDownDirection) {
+                  this.boardManager.removeWall({ x: bomb.x, y: bomb.y + i })
+                }
+              }
+              if (keepLeftDirection) {
+                const cell = this.boardManager.getCell({ x: bomb.x - i, y: bomb.y });
+                keepLeftDirection = isWall(cell); // Left
+                if (keepLeftDirection) {
+                  this.boardManager.removeWall({ x: bomb.x - i, y: bomb.y })
+                }
+              }
+              if (keepRightDirection) {
+                const cell = this.boardManager.getCell({ x: bomb.x + i, y: bomb.y });
+                keepRightDirection = isWall(cell); // Right
+                if (keepRightDirection) {
+                  this.boardManager.removeWall({ x: bomb.x + i, y: bomb.y })
+                }
+              }
+            }
+          }, 255);
+        }, 1500);
+      }
+      return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
+    }
+    return null;
+  }
+}
+
+function getBombRadius(bombType) {
+  switch (bombType) {
+    case "simple":
+      return 1;
+    case "super":
+      return 3;
+    default:
+      return 1;
+  }
+}
+
+export function isWall(cell) {
+  if (cell.startsWith('W')) {
+    return true;
+  } else if (cell === 'B') {
+    return false;
   }
 }

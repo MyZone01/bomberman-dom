@@ -38,6 +38,9 @@ export default class SocketHandler {
       case 'player-move':
         this.movePlayer(message);
         break;
+      case 'add-bomb':
+        this.addBomb(message);
+        break;
       default:
         break;
     }
@@ -76,6 +79,37 @@ export default class SocketHandler {
         });
       }
     }
+  }
+
+  addBomb(message) {
+    const access = message.payload.access;
+    const client = this.clients.get(access);
+    if (client) {
+      const bomb = this.game.addBomb(access, this.explodeBomb.bind(this));
+      if (bomb) {
+        this.clients.forEach((c) => {
+          c.send(JSON.stringify({
+            type: 'add-bomb',
+            payload: {
+              ...bomb
+            }
+          }));
+        });
+      }
+    }
+  }
+
+  explodeBomb(bomb, position) {
+    this.clients.forEach((c) => {
+      c.send(JSON.stringify({
+        type: 'explode-bomb',
+        payload: {
+          id: bomb.id,
+          radius: bomb.explosionRadius,
+          position
+        }
+      }));
+    });
   }
 
   initGame(message) {

@@ -21,6 +21,7 @@ export default class BoardManager {
       ['B', 'V', 'V', 'V', 'W', 'V', 'W', 'V', 'W', 'V', 'W', 'V', 'W', 'V', 'V', 'V', 'B'],
       ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B']
     ];
+
     for (let i = 0; i < GRID_SIZE; i++) {
       for (let j = 0; j < GRID_SIZE; j++) {
         if (this.board[i][j] === 'W' && Math.random() < 0.4) {
@@ -33,9 +34,28 @@ export default class BoardManager {
   }
 
   isValidMove(position) {
-    const cell = this.board[position.y - 1][position.x - 1];
+    const cell = this.getCell(position);
     const valid = cell === 'V' || cell === 'S' || cell === 'M' || cell === 'X';
-    console.log("VALID POSITION", valid, cell, position);
     return valid;
+  }
+
+  setCell(position, value) {
+    this.board[position.y - 1][position.x - 1] = value;
+  }
+
+  getCell(position) {
+    return this.board[position.y - 1][position.x - 1];
+  }
+
+  removeWall(position) {
+    const cell = this.getCell(position);
+    if (cell === "W") {
+      this.setCell(position, 'V');
+    } else {
+      const powerUp = cell[1];
+      console.log("remove cell", cell);
+      this.setCell(position, powerUp);
+    }
+    console.log("removeWall", this.board);
   }
 }

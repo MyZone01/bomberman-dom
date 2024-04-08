@@ -7,6 +7,9 @@ export default class Player {
     this.position = position;
     this.inputDirection = { x: 0, y: 0 };
     this.avatar = avatar;
+    this.currentBombType = "simple";
+    this.bombAmount = 1;
+    this.availableBombs = this.bombAmount;
   }
 
   isDeath() {

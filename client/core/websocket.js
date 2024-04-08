@@ -36,7 +36,7 @@ export default class SocketHandler {
         const players = message.payload.players;
         this.game.createGameBoard(board);
         this.game.placePlayer(players);
-        this.game.handleKeyPress(this.sendPlayerMove);
+        this.game.handleKeyPress(this.sendPlayerMove, this.sendAddBomb);
         break;
       case 'player-move':
         const id = message.payload.id;
@@ -47,9 +47,26 @@ export default class SocketHandler {
           this.game.movePlayer(id, position, direction);
         }
         break;
+      case 'add-bomb':
+        const bomb = message.payload;
+        this.game.addBomb(bomb);
+        break;
+      case 'explode-bomb':
+        const bombToExplode = message.payload;
+        this.game.explodeBomb(bombToExplode);
+        break;
       default:
         break;
     }
+  }
+
+  sendAddBomb() {
+    this.ws.send(JSON.stringify({
+      type: 'add-bomb',
+      payload: {
+        access: this.game.playAccess
+      }
+    }));
   }
 
   sendPlayerMove(direction) {
