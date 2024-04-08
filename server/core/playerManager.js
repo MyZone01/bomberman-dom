@@ -1,4 +1,4 @@
-class PlayersManager {
+export default class PlayersManager {
   constructor() {
     this.players = [];
   }

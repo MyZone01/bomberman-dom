@@ -1,6 +1,5 @@
-import { Player } from "../shared/models/index.js";
-import { uuid } from "./utils/helper.js";
 import WebSocket, { WebSocketServer } from 'ws';
+import { uuid } from './utils/helper.js';
 
 export default class SocketHandler {
   constructor(game) {
@@ -8,17 +7,19 @@ export default class SocketHandler {
     this.wss = new WebSocketServer({ port: 8080 });
     this.onConnection = this.onConnection.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
-    this.CreateNewUser = this.createNewUser.bind(this);
+    this.CreateNewUser = this.createNewPlayer.bind(this);
+    this.clients = new Map();
     this.wss.on('connection', this.onConnection);
   }
 
   onConnection(ws) {
     console.log("Client connected");
-    this.ws = ws;
-    this.ws.on('message', this.handleMessage);
-    this.ws.send(JSON.stringify({
-      type: "message",
-      payload: "Hello, Player!"
+    const id = uuid();
+    this.clients.set(id, ws);
+    ws.on('message', this.handleMessage);
+    ws.send(JSON.stringify({
+      type: "connection-success",
+      payload: { access: id }
     }));
   }
 
@@ -28,33 +29,45 @@ export default class SocketHandler {
 
     const type = message.type;
     switch (type) {
-      case "new-user":
-        this.createNewUser(message);
+      case "create-player":
+        this.createNewPlayer(message);
         break;
-      case "load-board":
-        this.initGame();
+      case "start-game":
+        this.initGame(message);
         break;
       default:
         break;
     }
   }
 
-  createNewUser(message) {
+  createNewPlayer(message) {
     console.log('Create User:');
-    const nickname = message.payload;
-    const id = uuid();
-    const player = new Player(id, nickname);
-    this.ws.send(JSON.stringify({
-      type: 'send-player',
-      payload: player
-    }));
+    const access = message.payload.access;
+    const nickname = message.payload.nickname;
+    const client = this.clients.get(access)
+    if (client) {
+      const player = this.game.addPlayer(access, nickname);
+      client.send(JSON.stringify({
+        type: 'create-player-success',
+        payload: player
+      }));
+    }
   }
 
-  initGame() {
-    console.log('Game is started');
-    this.ws.send(JSON.stringify({
-      type: 'send-board',
-      payload: this.game.board()
-    }));
+  initGame(message) {
+    const access = message.payload.access;
+    const client = this.clients.get(access);
+    if (client) {
+      console.log('Game is started');
+      this.clients.forEach((c) => {
+        c.send(JSON.stringify({
+          type: 'init-game',
+          payload: {
+            board: this.game.board(),
+            players: this.game.players()
+          }
+        }));
+      });
+    }
   }
 }

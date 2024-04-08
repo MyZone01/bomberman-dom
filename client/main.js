@@ -4,9 +4,14 @@ import Game from "./core/game.js";
 const game = new Game();
 const ws = new SocketHandler(game);
 
-const connect = () => {
+const connectPlayer = () => {
   let nickname = document.getElementById("nickname")
   ws.sendPlayerNickname(nickname.value);
 }
 
-document.getElementById("btn-connect")?.addEventListener("click", connect);
+const startGame = () => {
+  ws.startGame();
+}
+
+document.getElementById("btn-connect")?.addEventListener("click", connectPlayer);
+document.getElementById("btn-start")?.addEventListener("click", startGame);

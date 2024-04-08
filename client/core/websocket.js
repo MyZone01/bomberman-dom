@@ -5,7 +5,6 @@ export default class SocketHandler {
     this.ws = new WebSocket('ws://localhost:8080');
     this.ws.addEventListener('open', function () {
       console.log('Connected to server');
-      self.loadBoard();
     });
     this.ws.addEventListener('error', function (event) {
       console.error('WebSocket error:', event);
@@ -20,14 +19,18 @@ export default class SocketHandler {
     console.log(message);
     const type = message.type;
     switch (type) {
-      case 'send-player':
-        console.log('Player:', message.payload);
+      case "connection-success":
+        this.game.playAccess = message.payload.access;
         break;
-      case 'send-board':
-        console.log('Board:', message.payload);
-        this.game.board = message.payload;
-        this.game.createGameBoard();
-        // createGameBoard()
+      case 'create-player-success':
+        const player = message.payload;
+        this.game.setCurrentPlayer(player);
+        break;
+      case 'init-game':
+        const board = message.payload.board;
+        const players = message.payload.players;
+        this.game.createGameBoard(board);
+        this.game.placePlayer(players);
         break;
       default:
         break;
@@ -36,14 +39,20 @@ export default class SocketHandler {
 
   sendPlayerNickname(nickname) {
     this.ws.send(JSON.stringify({
-      type: 'new-user',
-      payload: nickname
+      type: 'create-player',
+      payload: {
+        access: this.game.playAccess,
+        nickname
+      }
     }));
   }
 
-  loadBoard() {
+  startGame() {
     this.ws.send(JSON.stringify({
-      type: 'load-board'
+      type: 'start-game',
+      payload: {
+        access: this.game.playAccess,
+      }
     }));
   }
 }

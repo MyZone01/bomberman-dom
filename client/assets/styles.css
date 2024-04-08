@@ -116,7 +116,7 @@ body {
 }
 
 #game-board {
-  background-color: #219e21;
+  background-color: #232c23;
   /* background-image: url(./img/grass.png); */
   width: 95vmin;
   height: 95vmin;
@@ -136,10 +136,6 @@ body {
   border: .25vmin solid black; */
   border-radius: 50%;
   z-index: 5;
-}
-
-.player::after {
-  content: "😁";
 }
 
 @keyframes movePlayer {
