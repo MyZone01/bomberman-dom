@@ -145,6 +145,8 @@ export default class Game {
     setTimeout(() => {
       this.gameBoard.removeChild(element);
     }, 255);
+    console.log('BOMB KILLED PLAYER(S):', bomb.affectedplayer);
+
   }
 
   explodeInDirection(x, y) {

@@ -322,7 +322,7 @@ body {
 }
 
 .block::after {
-  content: "🪨";
+  content: "🚧";
 }
 
 .wall {
