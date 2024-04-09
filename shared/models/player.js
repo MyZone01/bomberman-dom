@@ -16,18 +16,20 @@ export default class Player {
     return this.numberOfLife === 0
   }
 
-  move(direction, newPosition){
-    if (this.inputDirection.x === 0 && this.inputDirection.y === 0) {
-      this.inputDirection = direction;
-      setTimeout(() => {
-        this.position.x = newPosition.x;
-        this.position.y = newPosition.y;
-        this.stop();
-      }, 125);
-    }
+  move(direction, newPosition) {
+    this.inputDirection = direction;
+    setTimeout(() => {
+      this.position.x = newPosition.x;
+      this.position.y = newPosition.y;
+      this.stop();
+    }, 150);
   }
 
   stop() {
     this.inputDirection = { x: 0, y: 0 }
+  }
+
+  isMoving() {
+    return this.inputDirection.x !== 0 || this.inputDirection.y !== 0;
   }
 }

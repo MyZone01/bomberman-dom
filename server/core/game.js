@@ -39,7 +39,7 @@ export default class Game {
   movePlayer(access, direction) {
     const player = this.playerManager.getPlayerByAccess(access);
 
-    if (player) {
+    if (player && !player.isMoving()) {
       const newPosition = {
         x: player.position.x + direction.x,
         y: player.position.y + direction.y
@@ -81,7 +81,6 @@ export default class Game {
           this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V");
 
           setTimeout(() => {
-            console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
             player.availableBombs = player.bombAmount;
 
             let keepUpDirection = true;
