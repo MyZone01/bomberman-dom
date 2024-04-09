@@ -147,6 +147,26 @@ export default class Game {
     }, 255);
     console.log('BOMB DAMAGED PLAYER(S):', bomb.damagedPlayer);
     // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) DAMAGED BY BOMB
+    if (bomb.damagedPlayer.length > 0) {
+      
+      bomb.damagedPlayer.forEach(player => {
+        let playerElement = document.getElementById(player.id)
+        const blinkInterval = setInterval(() => {
+          if (playerElement.style.visibility === "hidden") {
+            playerElement.style.visibility = "visible";
+          } else {
+            playerElement.style.visibility = "hidden";
+          }
+        }, 200);
+  
+        // Arrêter le clignotement après 5 secondes (ou toute autre durée souhaitée)
+        setTimeout(() => {
+          clearInterval(blinkInterval);
+          playerElement.style.visibility = "visible"; // Assurez-vous que le joueur soit visible à la fin du clignotement
+        }, 3000); // 5 secondes
+      });
+    }
+    
   }
 
   explodeInDirection(x, y) {
