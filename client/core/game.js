@@ -145,8 +145,8 @@ export default class Game {
     setTimeout(() => {
       this.gameBoard.removeChild(element);
     }, 255);
-    console.log('BOMB KILLED PLAYER(S):', bomb.affectedplayer);
-
+    console.log('BOMB AFFECTED PLAYER(S):', bomb.affectedPlayer);
+    // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) AFFECTED BY BOMB
   }
 
   explodeInDirection(x, y) {

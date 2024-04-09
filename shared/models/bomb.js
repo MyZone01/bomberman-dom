@@ -5,11 +5,11 @@ export default class Bomb {
     this.y = y;
     this.explosionRadius = explosionRadius;
     this.manualBomb = false;
-    this.affectedplayer = [];
+    this.affectedPlayer = [];
   }
   addAffectedPlayer(player) {
-    this.affectedplayer.push(player);
-    console.log(this.affectedplayer);
+    this.affectedPlayer.push(player);
+    console.log(this.affectedPlayer);
   }
 
   // explode() {

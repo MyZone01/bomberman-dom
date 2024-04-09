@@ -107,7 +107,7 @@ export default class SocketHandler {
           id: bomb.id,
           radius: bomb.explosionRadius,
           position,
-          affectedplayer: bomb.affectedplayer
+          affectedPlayer: bomb.affectedPlayer
         }
       }));
     });
