@@ -93,28 +93,28 @@ export default class Game {
               if (keepUpDirection) {
                 const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y - i });
                 keepUpDirection = isWall(cell); // Up
-                if (keepUpDirection) {
+                if (keepUpDirection && cell.startsWith("W")) {
                   this.boardManager.removeWall({ x: bomb.x, y: bomb.y - i })
                 }
               }
               if (keepDownDirection) {
                 const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y + i });
                 keepDownDirection = isWall(cell); // Down
-                if (keepDownDirection) {
+                if (keepDownDirection && cell.startsWith("W")) {
                   this.boardManager.removeWall({ x: bomb.x, y: bomb.y + i })
                 }
               }
               if (keepLeftDirection) {
                 const cell = this.boardManager.getCell({ x: bomb.x - i, y: bomb.y });
                 keepLeftDirection = isWall(cell); // Left
-                if (keepLeftDirection) {
+                if (keepLeftDirection && cell.startsWith("W")) {
                   this.boardManager.removeWall({ x: bomb.x - i, y: bomb.y })
                 }
               }
               if (keepRightDirection) {
                 const cell = this.boardManager.getCell({ x: bomb.x + i, y: bomb.y });
                 keepRightDirection = isWall(cell); // Right
-                if (keepRightDirection) {
+                if (keepRightDirection && cell.startsWith("W")) {
                   this.boardManager.removeWall({ x: bomb.x + i, y: bomb.y })
                 }
               }
@@ -144,5 +144,7 @@ export function isWall(cell) {
     return true;
   } else if (cell === 'B') {
     return false;
+  } else {
+    return true
   }
 }

@@ -7,8 +7,8 @@ export default class Player {
     this.position = position;
     this.inputDirection = { x: 0, y: 0 };
     this.avatar = avatar;
-    this.currentBombType = "simple";
-    this.bombAmount = 1;
+    this.currentBombType = "super";
+    this.bombAmount = 3;
     this.availableBombs = this.bombAmount;
   }
 
@@ -17,13 +17,14 @@ export default class Player {
   }
 
   move(direction, newPosition){
-    if (this.inputDirection.x !== 0 || this.inputDirection.y !== 0) return;
-    this.inputDirection = direction;
-    setTimeout(() => {
-      this.position.x = newPosition.x;
-      this.position.y = newPosition.y;
-      this.stop();
-    }, 125);
+    if (this.inputDirection.x === 0 && this.inputDirection.y === 0) {
+      this.inputDirection = direction;
+      setTimeout(() => {
+        this.position.x = newPosition.x;
+        this.position.y = newPosition.y;
+        this.stop();
+      }, 125);
+    }
   }
 
   stop() {

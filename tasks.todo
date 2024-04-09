@@ -37,6 +37,7 @@
 + [ ] **Listen for Game Events (Client):**
   - [x] **Show Player Movement:** Update the game board to reflect player movement.
   - [x] **Show Bomb and Explosion:** Display bombs and their explosions on the game board.
+    - [ ] **Implement Connecting Explosion**
   - [ ] **Handle Damage:** Update the game board and HUD to reflect damage to walls, enemies, and players.
   - [ ] **Handle Death:** Update the game board and HUD to reflect the death of entities.
   - [ ] **Activate/Deactivate Power-Ups:** Update the HUD to reflect the activation or deactivation of power-up items.
