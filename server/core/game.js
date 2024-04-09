@@ -30,16 +30,16 @@ export default class Game {
     const radius = getBombRadius(bomb.type);
     // Vérifier les collisions avec les joueurs
     this.playerManager.players.forEach(player => {
-        console.log(player);
-    //    bomb.x-raduis < player.x < bomb.x+raduis
-        if (player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius && player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) {
-            player.numberOfLife--;
-            bomb.addAffectedPlayer(player)
-        }
+      console.log(player);
+      //    bomb.x-raduis < player.x < bomb.x+raduis
+      if (player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius && player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) {
+        player.numberOfLife--;
+        bomb.addDamagedPlayer(player)
+      }
     });
 
     return null;
- }
+  }
 
   addPlayer(access, nickname) {
     const id = 'player-' + this.numberOfPlayer;
@@ -90,18 +90,18 @@ export default class Game {
       if (player.currentBombType === "manual") {
         this.bombManager.makeManual(bomb.id)
       } else {
-          setTimeout(() => {
-            this.explodeBomb(bomb)
+        setTimeout(() => {
+          this.explodeBomb(bomb)
           sendExplodeBomb(bomb, { x: bomb.x, y: bomb.y });
           this.bombManager.removeBomb(bomb.id);
           this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V");
 
           setTimeout(() => {
-              console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
-              player.availableBombs = player.bombAmount;
-              
-              let keepUpDirection = true;
-              let keepDownDirection = true;
+            console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
+            player.availableBombs = player.bombAmount;
+
+            let keepUpDirection = true;
+            let keepDownDirection = true;
             let keepLeftDirection = true;
             let keepRightDirection = true;
 
@@ -110,17 +110,17 @@ export default class Game {
                 const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y - i });
                 keepUpDirection = isWall(cell); // Up
                 if (keepUpDirection) {
-                    this.boardManager.removeWall({ x: bomb.x, y: bomb.y - i })
+                  this.boardManager.removeWall({ x: bomb.x, y: bomb.y - i })
                 }
-            }
+              }
               if (keepDownDirection) {
-                  const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y + i });
-                  keepDownDirection = isWall(cell); // Down
+                const cell = this.boardManager.getCell({ x: bomb.x, y: bomb.y + i });
+                keepDownDirection = isWall(cell); // Down
                 if (keepDownDirection) {
-                    this.boardManager.removeWall({ x: bomb.x, y: bomb.y + i })
+                  this.boardManager.removeWall({ x: bomb.x, y: bomb.y + i })
                 }
-            }
-            if (keepLeftDirection) {
+              }
+              if (keepLeftDirection) {
                 const cell = this.boardManager.getCell({ x: bomb.x - i, y: bomb.y });
                 keepLeftDirection = isWall(cell); // Left
                 if (keepLeftDirection) {
@@ -133,12 +133,12 @@ export default class Game {
                 if (keepRightDirection) {
                   this.boardManager.removeWall({ x: bomb.x + i, y: bomb.y })
                 }
-            }
+              }
             }
           }, 255);
         }, 1500);
-    }
-    
+      }
+
       return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
     }
     return null;

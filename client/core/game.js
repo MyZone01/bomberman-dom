@@ -15,11 +15,11 @@ export default class Game {
   createGameBoard(board) {
     if (!this.isBoardCreated) {
       const fragment = document.createDocumentFragment();
-  
+
       for (let i = 0; i < GRID_SIZE; i++) {
         for (let j = 0; j < GRID_SIZE; j++) {
           if (board[i][j] === 'V') continue;
-  
+
           const cell = document.createElement('div');
           let cellClass = '';
           if (board[i][j] === 'B') {
@@ -30,16 +30,16 @@ export default class Game {
               cell.setAttribute('data-power', board[i][j].slice(1));
             }
           }
-  
+
           cell.classList.add(cellClass);
           cell.setAttribute('id', `c-${i + 1}-${j + 1}`);
           cell.style.gridRowStart = i + 1;
           cell.style.gridColumnStart = j + 1;
-  
+
           fragment.appendChild(cell);
         }
       }
-  
+
       this.gameBoard.appendChild(fragment);
       this.gameBoard.style.setProperty('display', "grid");
       document.getElementById("hud").style.setProperty('display', "none");
@@ -145,8 +145,8 @@ export default class Game {
     setTimeout(() => {
       this.gameBoard.removeChild(element);
     }, 255);
-    console.log('BOMB AFFECTED PLAYER(S):', bomb.affectedPlayer);
-    // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) AFFECTED BY BOMB
+    console.log('BOMB DAMAGED PLAYER(S):', bomb.damagedPlayer);
+    // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) DAMAGED BY BOMB
   }
 
   explodeInDirection(x, y) {
