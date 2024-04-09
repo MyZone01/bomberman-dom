@@ -32,7 +32,7 @@ export default class Game {
     this.playerManager.players.forEach(player => {
       console.log(player);
       //    bomb.x-raduis < player.x < bomb.x+raduis
-      if (player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius && player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) {
+      if ((player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius) && (player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) && (player.position.x == bomb.x || player.position.y == bomb.y)) {
         player.numberOfLife--;
         bomb.addDamagedPlayer(player)
       }
