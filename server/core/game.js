@@ -35,6 +35,11 @@ export default class Game {
       if ((player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius) && (player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) && (player.position.x == bomb.x || player.position.y == bomb.y)) {
         player.numberOfLife--;
         bomb.addDamagedPlayer(player)
+        console.log('=============', player.isDeath());
+        // if (player.numberOfLife<=0) {
+        //     bomb.addKilledPlayer(player)
+        //     console.log('++++++++==========+++++++++++');
+        // }
       }
     });
 
@@ -53,8 +58,11 @@ export default class Game {
 
   movePlayer(access, direction) {
     const player = this.playerManager.getPlayerByAccess(access);
-
+    
     if (player) {
+      if (player.isDeath()) {
+          return { id: player.id, position: null };
+      }
       const newPosition = {
         x: player.position.x + direction.x,
         y: player.position.y + direction.y
@@ -83,6 +91,9 @@ export default class Game {
 
   addBomb(access, sendExplodeBomb) {
     const player = this.playerManager.getPlayerByAccess(access);
+    if (player.isDeath()) {
+        return null;
+    }
     if (player && player.availableBombs > 0) {
       const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
       this.boardManager.setCell(player.position, "B");
