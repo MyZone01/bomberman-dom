@@ -26,6 +26,26 @@ export default class Game {
 
   }
 
+  explodeBomb(bomb) {
+    const radius = getBombRadius(bomb.type);
+    // Vérifier les collisions avec les joueurs
+    this.playerManager.players.forEach(player => {
+      console.log(player);
+      //    bomb.x-raduis < player.x < bomb.x+raduis
+      if ((player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius) && (player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) && (player.position.x == bomb.x || player.position.y == bomb.y)) {
+        player.numberOfLife--;
+        bomb.addDamagedPlayer(player)
+        console.log('=============', player.isDeath());
+        // if (player.numberOfLife<=0) {
+        //     bomb.addKilledPlayer(player)
+        //     console.log('++++++++==========+++++++++++');
+        // }
+      }
+    });
+
+    return null;
+  }
+
   addPlayer(access, nickname) {
     const id = 'player-' + this.numberOfPlayer;
     const position = playerDefaultPosition[this.numberOfPlayer];
@@ -38,8 +58,11 @@ export default class Game {
 
   movePlayer(access, direction) {
     const player = this.playerManager.getPlayerByAccess(access);
-
+    
     if (player && !player.isMoving()) {
+      if (player.isDeath()) {
+          return { id: player.id, position: null };
+      }
       const newPosition = {
         x: player.position.x + direction.x,
         y: player.position.y + direction.y
@@ -68,6 +91,9 @@ export default class Game {
 
   addBomb(access, sendExplodeBomb) {
     const player = this.playerManager.getPlayerByAccess(access);
+    if (player.isDeath()) {
+        return null;
+    }
     if (player && player.availableBombs > 0) {
       const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
       this.boardManager.setCell(player.position, "B");
@@ -76,11 +102,13 @@ export default class Game {
         this.bombManager.makeManual(bomb.id)
       } else {
         setTimeout(() => {
+          this.explodeBomb(bomb)
           sendExplodeBomb(bomb, { x: bomb.x, y: bomb.y });
           this.bombManager.removeBomb(bomb.id);
           this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V");
 
           setTimeout(() => {
+            console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
             player.availableBombs = player.bombAmount;
 
             let keepUpDirection = true;
@@ -121,6 +149,7 @@ export default class Game {
           }, 255);
         }, 1500);
       }
+
       return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
     }
     return null;
@@ -143,7 +172,7 @@ export function isWall(cell) {
     return true;
   } else if (cell === 'B') {
     return false;
-  } else {
-    return true
+  }else{
+    return true;
   }
 }

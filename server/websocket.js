@@ -106,7 +106,8 @@ export default class SocketHandler {
         payload: {
           id: bomb.id,
           radius: bomb.explosionRadius,
-          position
+          position,
+          damagedPlayer: bomb.damagedPlayer
         }
       }));
     });
