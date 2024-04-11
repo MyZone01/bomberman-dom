@@ -229,7 +229,8 @@ class page extends HTMLElement {
   players:[],
   messages:[],
   inputData : '',
-  currentP:''
+  currentP:'',
+  timer:0
 }"
 >
   <div class="player-settings" x-if="!$isconecte">
@@ -293,6 +294,11 @@ class page extends HTMLElement {
                   console.log('new player',$players);
                   return
                 }
+                if (data?.type ==='timer'){
+                  $timer=data?.payload?.timer
+                  console.log('timer',$timer);
+                  return
+                }
                 window.ws=null
                 $errorform=data?.payload
                 return
@@ -309,7 +315,7 @@ class page extends HTMLElement {
   <div class="container" x-else>
     <div class="counter">
       <div class="counter-box">
-        <span class="chrono" id="chrono">20</span>
+        <span class="chrono" id="chrono" x-text="$timer"></span>
       </div>
     </div>
     <div class="infos">
@@ -321,23 +327,23 @@ class page extends HTMLElement {
       </div>
       <div class="chat">
         <div class="messages">
-          <div class="messages-content"
+          <div class="messages-content" 
           x-for=" messagePlayer ,key in $messages"
           >
-            <div class="received" x-if="messagePlayer.player.id!==$currentP">
+            <div class="received" >
               <span class="avatar"  x-text="messagePlayer.player.emoji"></span>
               <div class="message new">
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @<span x-text="messagePlayer.player.nickname"></span></div>
               </div>
             </div>
-            <div class="message new message-personal" x-else>
+            <!-- <div class="message new message-personal" x-else>
               <span class="avatar" x-text="messagePlayer.player.emoji"></span>
               <div class="message new">
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @ <span x-text="messagePlayer.player.nickname"></span></div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="message-box">
