@@ -1,4 +1,4 @@
-const GRID_SIZE = 17
+const GRID_SIZE = 15
 
 export default class Game {
   constructor() {
@@ -49,26 +49,26 @@ export default class Game {
 
   placePlayer(players) {
     players.forEach(player => {
-       const exist = document.getElementById(player.id);
-       if (!exist) {
-         const element = document.createElement("div");
-         element.innerHTML = player.avatar;
-         element.classList.add("player");
-         element.setAttribute("id", player.id);
-         element.style.gridRowStart = player.position.y;
-         element.style.gridColumnStart = player.position.x;
-         this.gameBoard.appendChild(element);
-   
-         const livesElement = document.createElement("span");
-         livesElement.classList.add("lives");
-         livesElement.innerHTML = "❤️".repeat(3);
-         element.appendChild(livesElement);
-       }
-    });
-   }
+      const exist = document.getElementById(player.id);
+      if (!exist) {
+        const element = document.createElement("div");
+        element.innerHTML = player.avatar;
+        element.classList.add("player");
+        element.setAttribute("id", player.id);
+        element.style.gridRowStart = player.position.y;
+        element.style.gridColumnStart = player.position.x;
+        this.gameBoard.appendChild(element);
 
-   movePlayer(id, position, direction, nbrLife, toremove) {
-    if (toremove == true) {
+        const livesElement = document.createElement("span");
+        livesElement.classList.add("lives");
+        livesElement.innerHTML = "❤️".repeat(3);
+        element.appendChild(livesElement);
+      }
+    });
+  }
+
+  movePlayer(id, position, direction, nbrLife, toRemove) {
+    if (toRemove == true) {
       const cell = document.getElementById(`c-${position.y}-${position.x}`);
       const powerUp = cell.getAttribute("data-power")
       if (powerUp) {
@@ -163,7 +163,7 @@ export default class Game {
     console.log('BOMB DAMAGED PLAYER(S):', bomb.damagedPlayer);
     // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) DAMAGED BY BOMB
     if (bomb.damagedPlayer.length > 0) {
-      
+
       bomb.damagedPlayer.forEach(player => {
         let playerElement = document.getElementById(player.id)
         const blinkInterval = setInterval(() => {
@@ -173,7 +173,7 @@ export default class Game {
             playerElement.style.visibility = "hidden";
           }
         }, 200);
-  
+
         // Arrêter le clignotement après 5 secondes (ou toute autre durée souhaitée)
         setTimeout(() => {
           clearInterval(blinkInterval);
@@ -182,7 +182,7 @@ export default class Game {
         updatePlayerLives(player.id, player.numberOfLife)
       });
     }
-    
+
   }
 
   explodeInDirection(x, y) {
@@ -244,7 +244,7 @@ export function destroyWall(x, y) {
 function updatePlayerLives(playerId, lives) {
   const playerElement = document.getElementById(playerId);
   if (playerElement) {
-     const livesElement = playerElement.querySelector(".lives");
-     livesElement.innerHTML = "❤️".repeat(lives);
+    const livesElement = playerElement.querySelector(".lives");
+    livesElement.innerHTML = "❤️".repeat(lives);
   }
- }
+}

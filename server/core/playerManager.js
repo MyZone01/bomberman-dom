@@ -11,7 +11,7 @@ export default class PlayersManager {
   getPlayerByAccess(access) {
     return this.players.find(player => player.access === access);
   }
-  getPlayerByname(name){
+  getPlayerByName(name) {
     return this.players.find(player => player.nickname === name)
   }
 }

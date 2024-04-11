@@ -1,4 +1,4 @@
-const GRID_SIZE = 17
+import { GRID_SIZE } from "../../shared/constants.js";
 
 export default class Game {
   constructor() {
@@ -49,23 +49,22 @@ export default class Game {
 
   placePlayer(players) {
     players.forEach(player => {
-       const exist = document.getElementById(player.id);
-       if (!exist) {
-         const element = document.createElement("div");
-         element.innerHTML = player.avatar;
-         element.classList.add("player");
-         element.setAttribute("id", player.id);
-         element.style.gridRowStart = player.position.y;
-         element.style.gridColumnStart = player.position.x;
-         this.gameBoard.appendChild(element);
-   
-         const livesElement = document.createElement("span");
-         livesElement.classList.add("lives");
-         livesElement.innerHTML = "❤️".repeat(3);
-         element.appendChild(livesElement);
-       }
+      const exist = document.getElementById(player.id);
+      if (!exist) {
+        const element = document.createElement("div");
+        element.innerHTML = player.avatar;
+        element.classList.add("player");
+        element.setAttribute("id", player.id);
+        element.style.gridRowStart = player.position.y;
+        element.style.gridColumnStart = player.position.x;
+        this.gameBoard.appendChild(element);
+        const livesElement = document.createElement("span");
+        livesElement.classList.add("lives");
+        livesElement.innerHTML = "❤️".repeat(3);
+        element.appendChild(livesElement);
+      }
     });
-   }
+  }
 
   movePlayer(id, position, direction) {
     const element = document.getElementById(id);
@@ -150,10 +149,8 @@ export default class Game {
     setTimeout(() => {
       this.gameBoard.removeChild(element);
     }, 255);
-    console.log('BOMB DAMAGED PLAYER(S):', bomb.damagedPlayer);
-    // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) DAMAGED BY BOMB
+
     if (bomb.damagedPlayer.length > 0) {
-      
       bomb.damagedPlayer.forEach(player => {
         let playerElement = document.getElementById(player.id)
         const blinkInterval = setInterval(() => {
@@ -163,7 +160,7 @@ export default class Game {
             playerElement.style.visibility = "hidden";
           }
         }, 200);
-  
+
         // Arrêter le clignotement après 5 secondes (ou toute autre durée souhaitée)
         setTimeout(() => {
           clearInterval(blinkInterval);
@@ -172,7 +169,6 @@ export default class Game {
         updatePlayerLives(player.id, player.numberOfLife)
       });
     }
-    
   }
 
   explodeInDirection(x, y) {
@@ -208,12 +204,10 @@ export default class Game {
 
 export function destroyWall(x, y) {
   const cell = document.getElementById(`c-${y}-${x}`);
-  console.log(cell);
   if (cell && cell.classList.contains("wall")) {
     cell.classList.add("explode");
     setTimeout(() => {
       const powerUp = cell.getAttribute("data-power")
-      console.log(x, y, powerUp);
       if (powerUp) {
         cell.classList.remove("explode");
         cell.classList.remove("wall");
@@ -234,7 +228,7 @@ export function destroyWall(x, y) {
 function updatePlayerLives(playerId, lives) {
   const playerElement = document.getElementById(playerId);
   if (playerElement) {
-     const livesElement = playerElement.querySelector(".lives");
-     livesElement.innerHTML = "❤️".repeat(lives);
+    const livesElement = playerElement.querySelector(".lives");
+    livesElement.innerHTML = "❤️".repeat(lives);
   }
- }
+}

@@ -6,10 +6,10 @@ export default class SocketHandler {
   constructor(game) {
     this.game = game;
     this.messages = [];
-    this.timer = 39;
-    this.currenid = 0;
-    this.initialTimer=true
-    this.starGame=false
+    this.timer = 10;
+    this.currentId = 0;
+    this.initialTimer = true
+    this.starGame = false
 
     this.clients = new Map();
     this.PlayersManage = new PlayersManager();
@@ -21,11 +21,11 @@ export default class SocketHandler {
   }
 
   onConnection(ws) {
-    if (this.game.numberOfPlayer >= 4) { 
+    if (this.game.numberOfPlayer >= 4) {
       this.sendMessage(
         ws,
-        "only 4 user in authorise to play game",
-        "not-authorise"
+        "only 4 user in authorize to play game",
+        "not-authorize"
       );
       return;
     }
@@ -33,20 +33,19 @@ export default class SocketHandler {
       this.sendMessage(
         ws,
         "Game already start",
-        "not-authorise"
+        "not-authorize"
       );
       return
     }
 
-
     const id = uuid();
     this.clients.set(id, ws);
-    this.currenid = id;
+    this.currentId = id;
     ws.on("message", this.handleMessage);
   }
+
   handleMessage(_message) {
     const message = JSON.parse(_message);
-    console.log("Received from client:", message.payload);
     const type = message.type;
     switch (type) {
       case "create-player":
@@ -62,19 +61,19 @@ export default class SocketHandler {
         this.addBomb(message);
         break;
       case "chat":
-        console.log("new message");
         this.chat(message.payload);
         break;
       default:
         break;
     }
   }
+
   createNewPlayer(message) {
     console.log("Create User:", message);
-    const access = message.payload.access || this.currenid;;
-    const nickname = message.payload.nickname 
+    const access = message.payload.access || this.currentId;;
+    const nickname = message.payload.nickname
     const emoji = message.payload.emoji;
-    const client = this.clients.get(this.currenid);
+    const client = this.clients.get(this.currentId);
     if (client) {
       const player = this.game.addPlayer(access, nickname, emoji);
       this.register(message, client, player);
@@ -87,7 +86,7 @@ export default class SocketHandler {
     const direction = message.payload.direction;
     const client = this.clients.get(access);
     if (client) {
-      const { position, id, nbrLife, toremove } = this.game.movePlayer(access, direction);
+      const { position, id, nbrLife, toRemove } = this.game.movePlayer(access, direction);
       if (position) {
         this.clients.forEach((c) => {
           c.send(JSON.stringify({
@@ -97,7 +96,7 @@ export default class SocketHandler {
               position,
               direction,
               nbrLife,
-              toremove
+              toRemove
             }
           }));
         });
@@ -166,19 +165,18 @@ export default class SocketHandler {
 
   register(message, ws, player) {
     const newPlayer = message.payload;
-    if (this.PlayersManage.getPlayerByname(newPlayer?.nickname)) {
+    if (this.PlayersManage.getPlayerByName(newPlayer?.nickname)) {
       this.sendMessage(
         ws,
-        "username alredy existe. Chose an other",
-        "not-authorise"
+        "username already exist. Chose an other",
+        "not-authorize"
       );
       return;
     }
-    // const id = crypto.randomUUID();
-    // const player = new Player(id, newPlayer.name, newPlayer.emoji);
+
     this.PlayersManage.addPlayer(player);
     console.log("list of player", player);
-    this.sendMessage(ws, { id: this.currenid }, "create-successfully");
+    this.sendMessage(ws, { id: this.currentId }, "create-successfully");
 
     this.clients.forEach((client) => {
       this.sendMessage(
@@ -187,7 +185,7 @@ export default class SocketHandler {
         "new-player"
       );
     });
-    this.timerSart()
+    this.timerStart()
   }
 
   sendMessage(ws, messages, type) {
@@ -200,43 +198,42 @@ export default class SocketHandler {
   }
 
   chat(data) {
-
     let player = this.PlayersManage.getPlayerByAccess(data.userId);
     let message = { content: data.content, player };
     this.messages.push(message);
     this.clients.forEach((client) => {
-      this.sendMessage(client, {messages:this.messages}, "chat");
+      this.sendMessage(client, { messages: this.messages }, "chat");
     });
   }
 
-  timerSart(){
+  timerStart() {
     console.log("number of player", this.game.numberOfPlayer);
-    if (this.initialTimer && this.game.numberOfPlayer>1 ) {
-      let intervalTimer= setInterval(()=>{
+    if (this.initialTimer && this.game.numberOfPlayer > 1) {
+      let intervalTimer = setInterval(() => {
         if (this.game.numberOfPlayer >= 4 && !this.starGame) {
-          this.timer=10
-          this.starGame=true
+          this.timer = 5
+          this.starGame = true
         }
-        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
-          this.timer=10
-          this.starGame=true
+        if (this.timer < 0 && this.game.numberOfPlayer < 4 && !this.starGame) {
+          this.timer = 5
+          this.starGame = true
         }
-        if (this.timer<0) {
-           clearInterval(intervalTimer)
-           //  start the game
-           this.clients.forEach((client) => {
-            this.sendMessage(client, {timer:this.timer}, "ready-init-game");
+        if (this.timer < 0) {
+          clearInterval(intervalTimer)
+          //  start the game
+          this.clients.forEach((client) => {
+            this.sendMessage(client, { timer: this.timer }, "ready-init-game");
           });
           return
         }
 
         this.clients.forEach((client) => {
-          this.sendMessage(client, {timer:this.timer}, "timer");
+          this.sendMessage(client, { timer: this.timer }, "timer");
         });
-          
-         this.timer--
-       },1000)
-      this.initialTimer=false
+
+        this.timer--
+      }, 1000)
+      this.initialTimer = false
     }
   }
 }

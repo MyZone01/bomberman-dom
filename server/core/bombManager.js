@@ -5,6 +5,11 @@ export default class BombManager {
     this.bombs = [];
   }
 
+  getBombIdAtPosition(position) {
+    const bomb = this.bombs.find(b => b.x === position.x && b.y === position.y);
+    return bomb;
+  }
+
   addBomb(position, explosionRadius) {
     const bomb = new Bomb(position.x, position.y, explosionRadius);
     this.bombs.push(bomb);

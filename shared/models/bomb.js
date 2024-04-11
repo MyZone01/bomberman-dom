@@ -7,9 +7,8 @@ export default class Bomb {
     this.manualBomb = false;
     this.damagedPlayer = [];
   }
+
   addDamagedPlayer(player) {
     this.damagedPlayer.push(player);
-    console.log(this.damagedPlayer);
   }
-
 }

@@ -1,9 +1,9 @@
 export default class SocketHandler {
   constructor(game) {
     this.game = game
-    console.log("socket in ",window.ws);
+    console.log("socket in ", window.ws);
     this.ws = window.ws || null;
-    this.game.playAccess=window.access
+    this.game.playAccess = window.access
     this.ws.addEventListener('error', function (event) {
       console.error('WebSocket error:', event);
     });
@@ -34,10 +34,10 @@ export default class SocketHandler {
         const position = message.payload.position;
         const direction = message.payload.direction;
         const nbrLife = message.payload.nbrLife;
-        const toremove = message.payload.toremove;
+        const toRemove = message.payload.toRemove;
 
         if (position) {
-          this.game.movePlayer(id, position, direction, nbrLife, toremove);
+          this.game.movePlayer(id, position, direction, nbrLife, toRemove);
         }
         break;
       case 'add-bomb':

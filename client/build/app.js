@@ -19,15 +19,18 @@ class page extends HTMLElement {
     height: 100%;
     width: 80vw;
   }
+
   .infos {
     display: grid;
     grid-template-columns: 40% 59%;
     grid-gap: 10px;
   }
+
   .players {
     display: grid;
     gap: 2px;
   }
+
   /* .player span {
     font-size: 3rem;
   } */
@@ -54,6 +57,7 @@ class page extends HTMLElement {
     justify-content: space-between;
     flex-direction: column;
   }
+
   .messages {
     flex: 1 1 auto;
     color: black;
@@ -62,6 +66,7 @@ class page extends HTMLElement {
     width: 100%;
     min-height: 50vh;
   }
+
   .messages .messages-content {
     position: absolute;
     top: 0;
@@ -69,10 +74,12 @@ class page extends HTMLElement {
     height: 100%;
     width: 100%;
   }
+
   .messages-content {
     overflow-y: scroll;
     padding: 2px;
   }
+
   .messages .message {
     clear: both;
     float: left;
@@ -85,11 +92,13 @@ class page extends HTMLElement {
     position: relative;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
+
   .received {
     display: flex;
     align-items: center;
     gap: 3px;
   }
+
   .avatar {
     font-size: 30px;
     border: 2px solid rgba(255, 255, 255, 0.24);
@@ -97,12 +106,14 @@ class page extends HTMLElement {
     background-color: orange;
     padding: 5px;
   }
+
   .messages .message .timestamp {
     bottom: -15px;
     font-size: 9px;
     color: rgba(255, 255, 255, 0.3);
     text-align: right;
   }
+
   .messages .message::before {
     content: "";
     position: absolute;
@@ -111,12 +122,14 @@ class page extends HTMLElement {
     left: 0;
     border-right: 7px solid transparent;
   }
+
   .messages .message.message-personal {
     float: right;
     color: var(--white);
     background: var(--tertiary);
     border-radius: 10px 10px 0 10px;
   }
+
   .messages .message.message-personal::before {
     left: auto;
     right: 0;
@@ -125,9 +138,11 @@ class page extends HTMLElement {
     border-top: 4px solid var(--tertiary);
     bottom: -4px;
   }
+
   .messages .message:last-child {
     margin-bottom: 30px;
   }
+
   .messages .message.new {
     transform-origin: 0 0;
     animation: bounce 500ms linear both;
@@ -135,6 +150,7 @@ class page extends HTMLElement {
     max-width: 70%;
     word-wrap: break-word;
   }
+
   .message-box {
     display: flex;
     align-items: center;
@@ -142,6 +158,7 @@ class page extends HTMLElement {
     padding: 2px;
     background: rgba(0, 0, 0, 0.3);
   }
+
   .message-box .message-input {
     border-radius: 10px;
     background-color: var(--primary);
@@ -151,36 +168,44 @@ class page extends HTMLElement {
     width: 80%;
     margin: 4px;
   }
+
   .message-box textarea:focus:-webkit-placeholder {
     color: transparent;
   }
+
   .message-box .message-submit {
     border-radius: 10px;
     padding: 5px;
     height: 70%;
   }
+
   .message-box .message-submit:hover {
     background: orange;
   }
+
   /*-------------------- Custom Srollbar --------------------*/
   ::-webkit-scrollbar {
     width: 3px;
     border-radius: 10px;
     /* Largeur de la scrollbar */
   }
+
   ::-webkit-scrollbar-thumb {
     background: orange;
     /* Couleur de fond du thumb de la scrollbar */
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: white;
     /* Couleur de fond du thumb de la scrollbar au survol */
   }
+
   /*Counter*/
   .counter {
     display: flex;
     justify-content: center;
   }
+
   .counter-box {
     display: grid;
     height: 10%;
@@ -190,27 +215,30 @@ class page extends HTMLElement {
     border-radius: 5px;
     background-color: black;
   }
+
   .chrono {
     font-size: 2rem;
     color: white;
     display: block;
     padding: 10px;
   }
+
   .beat {
     animation: beat 1s;
     animation-iteration-count: infinite;
   }
+
   @keyframes beat {
     from {
       transform: scale(1);
     }
+
     to {
       transform: scale(1.5);
     }
   }
 </style>
-<main
-  x-data="{emojis:[
+<main x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
     { name: '😱', selected: false },
@@ -225,31 +253,27 @@ class page extends HTMLElement {
     { name: '🤡', selected: false }
   ],
   namePlayer:'',
-  selectedemoji:'',
-  errorform:'',
-  isconecte:false,
+  selectedEmoji:'',
+  errorForm:'',
+  isConnected:false,
   players:[],
   messages:[],
   inputData : '',
-  currentP:'',
+  currentPlayer:'',
   timer:0,
   isListening:true,
   isOpen: true,
   ws:''
-}"
->
-  <div class="player-settings" x-if="!$isconecte">
-    <p x-text="$errorform" style="color: red"></p>
+}">
+  <div class="player-settings" x-if="!$isConnected">
+    <p x-text="$errorForm" style="color: red"></p>
     <input type="text" placeholder="Player Name" x-model="$namePlayer" />
     <p>Select your player</p>
     <div class="select-emoji-container" x-for="emojiItem, key in $emojis">
-      <div
-        class="emoji-select-wrapper"
-        @click="
+      <div class="emoji-select-wrapper" @click="
           $emojis = [...$emojis.map((v, i) => key === i ? ({...v, selected: true}) : ({...v, selected: false}) )]
-          $selectedemoji=emojiItem.name
-          "
-      >
+          $selectedEmoji=emojiItem.name
+          ">
         <div class="select-emoji selected" x-if="emojiItem.selected">
           <span x-text="emojiItem.name"></span>
           <div class="sun">
@@ -263,18 +287,16 @@ class page extends HTMLElement {
         </div>
       </div>
     </div>
-    <button
-      id="starttest"
-      @click="
-            if($namePlayer && $selectedemoji){
+    <button id="starttest" @click="
+            if($namePlayer && $selectedEmoji){
               let player={
                 nickname: $namePlayer,
-                emoji:$selectedemoji
+                emoji:$selectedEmoji
               }
               if ($isListening) {
                 window.ws = new WebSocket('ws://localhost:8080');
                 $ws= window.ws
-        
+
                 $ws.addEventListener('open', () => {
                   console.log('Connected to server',player);
                   $isListening=false
@@ -286,22 +308,19 @@ class page extends HTMLElement {
                 $ws.onmessage = function(event) {
                   let data=JSON.parse(event.data)
                   if (data?.type ==='create-successfully') {
-                    $isconecte=true
+                    $isConnected=true
                     $messages=data?.payload?.messages|| []
                     window.access=data?.payload?.id
-                    $currentP=data?.payload?.id
+                    $currentPlayer=data?.payload?.id
                   }else if (data?.type ==='chat'){
                     console.log('new message',data?.payload);
                     $messages=[...data?.payload?.messages] || []
-                    
                   }else if (data?.type ==='new-player'){
                     $players=data?.payload?.players
                     console.log('new player',$players);
-                    
                   }else if (data?.type ==='timer'){
                     $timer=data?.payload?.timer
                     console.log('timer',$timer);
-                    
                   }else if (data?.type ==='ready-init-game'){
                     let script=document.createElement('script')
                     script.setAttribute('type','module') 
@@ -314,17 +333,15 @@ class page extends HTMLElement {
                     document.querySelector('head').appendChild(link)
                   }else{
                     $ws=null
-                    $errorform=data?.payload
-                    console.log($errorform);
+                    $errorForm=data?.payload
+                    console.log($errorForm);
                   }
-                  
                 };
               }
             }else{
-              $errorform='A name and a emoji is needed'
+              $errorForm='A name and a emoji is needed'
             }
-        "
-    >
+        ">
       Start
     </button>
   </div>
@@ -344,12 +361,10 @@ class page extends HTMLElement {
       </div>
       <div class="chat">
         <div class="messages">
-          <div class="messages-content" 
-          x-for="messagePlayer, key in $messages"
-          >
-            <div class="received" x-if="messagePlayer.player.access!== $currentP" >
-              <span class="avatar"  x-text="messagePlayer.player.avatar"></span>
-              <div class="message new" >
+          <div class="messages-content" x-for="messagePlayer, key in $messages">
+            <div class="received" x-if="messagePlayer.player.access!== $currentPlayer">
+              <span class="avatar" x-text="messagePlayer.player.avatar"></span>
+              <div class="message new">
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @<span x-text="messagePlayer.player.nickname"></span></div>
               </div>
@@ -364,19 +379,12 @@ class page extends HTMLElement {
           </div>
         </div>
         <div class="message-box">
-          <input
-            type="text"
-            value=""
-            class="message-input"
-            placeholder="Type message..."
-            x-model="$inputData"
-           
-          />
+          <input type="text" value="" class="message-input" placeholder="Type message..." x-model="$inputData" />
           <button type="submit" class="message-submit" @click="
           
           let message={
                 content: $inputData,
-                userId:$currentP
+                userId:$currentPlayer
               }
               console.log('message to send',message);
               $ws.send(JSON.stringify({
