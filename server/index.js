@@ -1,4 +1,3 @@
-
 import { register ,chat, sendMessage} from "./websocket.js";
 import { PlayersManager} from "./core/playerManager.js";
 import WebSocket, { WebSocketServer } from 'ws';

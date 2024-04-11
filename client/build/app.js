@@ -328,7 +328,7 @@ class page extends HTMLElement {
       <div class="chat">
         <div class="messages">
           <div class="messages-content" 
-          x-for=" messagePlayer ,key in $messages"
+          x-for="messagePlayer, key in $messages"
           >
             <div class="received" >
               <span class="avatar"  x-text="messagePlayer.player.emoji"></span>
