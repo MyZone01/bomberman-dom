@@ -230,7 +230,7 @@ class page extends HTMLElement {
   messages:[],
   inputData : '',
   currentP:'',
-  timer:0
+  timer:20
 }"
 >
   <div class="player-settings" x-if="!$isconecte">
@@ -263,7 +263,7 @@ class page extends HTMLElement {
       @click="
             if($namePlayer && $selectedemoji){
               let player={
-                name: $namePlayer,
+                nickname: $namePlayer,
                 emoji:$selectedemoji
               }
               window.ws = new WebSocket('ws://localhost:8080');
@@ -271,7 +271,7 @@ class page extends HTMLElement {
               window.ws.onopen = function(event) {
               console.log('Connected to server',player);
               window.ws.send(JSON.stringify({
-                  type: 'new-user',
+                  type: 'create-player',
                   payload: player
                 }))
               };
@@ -280,7 +280,7 @@ class page extends HTMLElement {
                 if (data?.type ==='create-successfully') {
                   $isconecte=true
                   $messages=data?.payload?.messages|| []
-                  window.currentPId=data?.payload?.id
+                  window.currentPId=data?.payload?.access
                   $currentP=data?.payload?.id
                   return
                 }
@@ -301,6 +301,7 @@ class page extends HTMLElement {
                 }
                 window.ws=null
                 $errorform=data?.payload
+                console.log($errorform);
                 return
               };
             }
@@ -314,14 +315,14 @@ class page extends HTMLElement {
 
   <div class="container" x-else>
     <div class="counter">
-      <div class="counter-box">
-        <span class="chrono" id="chrono" x-text="$timer"></span>
+      <div class="">
+        <span x-text="$timer"></span>
       </div>
     </div>
     <div class="infos">
       <div class="players" x-for="playerItem, key in $players">
         <div class="player">
-          <span x-text="playerItem.emoji"></span>
+          <span x-text="playerItem.avatar"></span>
           <p x-text="playerItem.nickname"></p>
         </div>
       </div>
@@ -353,19 +354,19 @@ class page extends HTMLElement {
             class="message-input"
             placeholder="Type message..."
             x-model="$inputData"
-            @keyup.enter="
-              let message={
+           
+          />
+          <button type="submit" class="message-submit" @click="
+            let message={
                 content: $inputData,
                 userId: window.currentPId
               }
-
+              console.log(message);
               window.ws.send(JSON.stringify({
                   type: 'chat',
                   payload: message
               }))
-          "
-          />
-          <!-- <button type="submit" class="message-submit">Send</button> -->
+          ">Send</button>
         </div>
       </div>
     </div>
