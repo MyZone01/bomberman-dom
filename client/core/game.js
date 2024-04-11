@@ -49,18 +49,23 @@ export default class Game {
 
   placePlayer(players) {
     players.forEach(player => {
-      const exist = document.getElementById(player.id);
-      if (!exist) {
-        const element = document.createElement("div");
-        element.innerHTML = player.avatar;
-        element.classList.add("player");
-        element.setAttribute("id", player.id);
-        element.style.gridRowStart = player.position.y;
-        element.style.gridColumnStart = player.position.x;
-        this.gameBoard.appendChild(element)
-      }
+       const exist = document.getElementById(player.id);
+       if (!exist) {
+         const element = document.createElement("div");
+         element.innerHTML = player.avatar;
+         element.classList.add("player");
+         element.setAttribute("id", player.id);
+         element.style.gridRowStart = player.position.y;
+         element.style.gridColumnStart = player.position.x;
+         this.gameBoard.appendChild(element);
+   
+         const livesElement = document.createElement("span");
+         livesElement.classList.add("lives");
+         livesElement.innerHTML = "❤️".repeat(3);
+         element.appendChild(livesElement);
+       }
     });
-  }
+   }
 
   movePlayer(id, position, direction) {
     const element = document.getElementById(id);
@@ -164,6 +169,7 @@ export default class Game {
           clearInterval(blinkInterval);
           playerElement.style.visibility = "visible"; // Assurez-vous que le joueur soit visible à la fin du clignotement
         }, 3000); // 5 secondes
+        updatePlayerLives(player.id, player.numberOfLife)
       });
     }
     
@@ -224,3 +230,11 @@ export function destroyWall(x, y) {
     return 2;
   }
 }
+
+function updatePlayerLives(playerId, lives) {
+  const playerElement = document.getElementById(playerId);
+  if (playerElement) {
+     const livesElement = playerElement.querySelector(".lives");
+     livesElement.innerHTML = "❤️".repeat(lives);
+  }
+ }
