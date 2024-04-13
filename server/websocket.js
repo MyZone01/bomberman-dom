@@ -213,11 +213,10 @@ export default class SocketHandler {
     console.log("number of player", this.game.numberOfPlayer);
     if (this.initialTimer && this.game.numberOfPlayer>1 ) {
       let intervalTimer= setInterval(()=>{
-        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
-          this.timer=10
-          this.starGame=true
-        }
         if (this.game.numberOfPlayer >= 4 && !this.starGame) {
+          this.timer=0
+        }
+        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
           this.timer=10
           this.starGame=true
         }
