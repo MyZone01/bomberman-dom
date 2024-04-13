@@ -1,10 +1,9 @@
 export default class SocketHandler {
-  constructor(game, callback) {
+  constructor(game) {
     this.game = game
-    this.ws = new WebSocket('ws://localhost:8080');
-    this.ws.addEventListener('open', function () {
-      console.log('Connected to server');
-    });
+    console.log("socket in ",window.ws);
+    this.ws = window.ws || null;
+    this.game.playAccess=window.access
     this.ws.addEventListener('error', function (event) {
       console.error('WebSocket error:', event);
     });
@@ -23,14 +22,6 @@ export default class SocketHandler {
     console.log(message);
     const type = message.type;
     switch (type) {
-      case "connection-success":
-        this.game.playAccess = message.payload.access;
-        JustForDevMode();
-        break;
-      case 'create-player-success':
-        const player = message.payload;
-        this.game.setCurrentPlayer(player);
-        break;
       case 'init-game':
         const board = message.payload.board;
         const players = message.payload.players;

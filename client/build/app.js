@@ -28,9 +28,9 @@ class page extends HTMLElement {
     display: grid;
     gap: 2px;
   }
-  .player span {
+  /* .player span {
     font-size: 3rem;
-  }
+  } */
   .player {
     display: flex;
     flex-direction: column;
@@ -286,7 +286,7 @@ class page extends HTMLElement {
                   if (data?.type ==='create-successfully') {
                     $isconecte=true
                     $messages=data?.payload?.messages|| []
-                    window.currentPId=data?.payload?.id
+                    window.access=data?.payload?.id
                     $currentP=data?.payload?.id
                   }else if (data?.type ==='chat'){
                     console.log('new message',data?.payload);
@@ -300,17 +300,27 @@ class page extends HTMLElement {
                     $timer=data?.payload?.timer
                     console.log('timer',$timer);
                     
-                  }else
-                  $ws=null
-                  $errorform=data?.payload
-                  console.log($errorform);
+                  }else if (data?.type ==='ready-init-game'){
+                    let script=document.createElement('script')
+                    script.setAttribute('type','module') 
+                    script.setAttribute('src','/js/main.js') 
+                    document.querySelector('body').appendChild(script)
+
+                    let link=document.createElement('link')
+                    link.setAttribute('rel','stylesheet') 
+                    link.setAttribute('href','/css/game.css') 
+                    document.querySelector('head').appendChild(link)
+                  }else{
+                    $ws=null
+                    $errorform=data?.payload
+                    console.log($errorform);
+                  }
                   
                 };
               }
             }else{
               $errorform='A name and a emoji is needed'
             }
-
         "
     >
       Start

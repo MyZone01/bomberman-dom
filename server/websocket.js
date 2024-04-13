@@ -8,9 +8,9 @@ export default class SocketHandler {
     this.messages = [];
     this.timer = 19;
     this.currenid = 0;
-    this.initialConnection=true
+    this.initialTimer=true
     this.starGame=false
-    
+
     this.clients = new Map();
     this.PlayersManage = new PlayersManager();
     this.wss = new WebSocketServer({ port: 8080 });
@@ -29,34 +29,21 @@ export default class SocketHandler {
       );
       return;
     }
+    if (this.starGame) {
+      this.sendMessage(
+        ws,
+        "Game already start",
+        "not-authorise"
+      );
+      return
+    }
+
 
     const id = uuid();
     this.clients.set(id, ws);
     this.currenid = id;
     ws.on("message", this.handleMessage);
-
-    if (this.initialConnection) {
-      let intervalTimer= setInterval(()=>{
-        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
-          this.timer=10
-          this.starGame=true
-        }
-        if (this.timer<0 || this.game.numberOfPlayer >= 4) {
-           clearInterval(intervalTimer)
-           //  start the game
-           return
-        }
-
-        this.clients.forEach((client) => {
-          this.sendMessage(client, {timer:this.timer}, "timer");
-        });
-          
-         this.timer--
-       },1000)
-      this.initialConnection=false
-    }
   }
-
   handleMessage(_message) {
     const message = JSON.parse(_message);
     console.log("Received from client:", message.payload);
@@ -200,6 +187,7 @@ export default class SocketHandler {
         "new-player"
       );
     });
+    this.timerSart()
   }
 
   sendMessage(ws, messages, type) {
@@ -219,5 +207,32 @@ export default class SocketHandler {
     this.clients.forEach((client) => {
       this.sendMessage(client, {messages:this.messages}, "chat");
     });
+  }
+
+  timerSart(){
+    console.log("number of player", this.game.numberOfPlayer);
+    if (this.initialTimer && this.game.numberOfPlayer>1 ) {
+      let intervalTimer= setInterval(()=>{
+        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
+          this.timer=10
+          this.starGame=true
+        }
+        if (this.timer<0 || this.game.numberOfPlayer >= 4) {
+           clearInterval(intervalTimer)
+           //  start the game
+           this.clients.forEach((client) => {
+            this.sendMessage(client, {timer:this.timer}, "ready-init-game");
+          });
+          return
+        }
+
+        this.clients.forEach((client) => {
+          this.sendMessage(client, {timer:this.timer}, "timer");
+        });
+          
+         this.timer--
+       },1000)
+      this.initialTimer=false
+    }
   }
 }
