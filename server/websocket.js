@@ -87,19 +87,19 @@ export default class SocketHandler {
     const direction = message.payload.direction;
     const client = this.clients.get(access);
     if (client) {
-      const { position, id } = this.game.movePlayer(access, direction);
+      const { position, id, nbrLife, toremove } = this.game.movePlayer(access, direction);
       if (position) {
         this.clients.forEach((c) => {
-          c.send(
-            JSON.stringify({
-              type: "player-move",
-              payload: {
-                id,
-                position,
-                direction,
-              },
-            })
-          );
+          c.send(JSON.stringify({
+            type: 'player-move',
+            payload: {
+              id,
+              position,
+              direction,
+              nbrLife,
+              toremove
+            }
+          }));
         });
       }
     }

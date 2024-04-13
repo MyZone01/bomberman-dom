@@ -36,7 +36,7 @@ export default class BoardManager {
   isValidMove(position) {
     const cell = this.getCell(position);
     const valid = cell === 'V' || cell === 'S' || cell === 'M' || cell === 'X';
-    return valid;
+    return { valid, cellType: cell };
   }
 
   setCell(position, value) {
@@ -57,5 +57,9 @@ export default class BoardManager {
       this.setCell(position, powerUp);
     }
     console.log("removeWall", this.board);
+  }
+  
+  makeCellEmpty(position) {
+    this.board[position.y - 1][position.x - 1] = 'V';
   }
 }

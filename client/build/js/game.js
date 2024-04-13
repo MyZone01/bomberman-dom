@@ -67,7 +67,17 @@ export default class Game {
     });
    }
 
-  movePlayer(id, position, direction) {
+   movePlayer(id, position, direction, nbrLife, toremove) {
+    if (toremove == true) {
+      const cell = document.getElementById(`c-${position.y}-${position.x}`);
+      const powerUp = cell.getAttribute("data-power")
+      if (powerUp) {
+        cell.remove()
+      }
+    }
+    if (nbrLife) {
+      updatePlayerLives(id, nbrLife)
+    }
     const element = document.getElementById(id);
 
     const translateX = element.clientWidth * direction.x;

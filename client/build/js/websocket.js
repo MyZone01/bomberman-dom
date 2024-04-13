@@ -33,9 +33,11 @@ export default class SocketHandler {
         const id = message.payload.id;
         const position = message.payload.position;
         const direction = message.payload.direction;
+        const nbrLife = message.payload.nbrLife;
+        const toremove = message.payload.toremove;
 
         if (position) {
-          this.game.movePlayer(id, position, direction);
+          this.game.movePlayer(id, position, direction, nbrLife, toremove);
         }
         break;
       case 'add-bomb':

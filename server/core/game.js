@@ -60,19 +60,40 @@ export default class Game {
     const player = this.playerManager.getPlayerByAccess(access);
     
     if (player && !player.isMoving()) {
+      let toremove = false
       if (player.isDeath()) {
-          return { id: player.id, position: null };
+          return { id: player.id, position: null, nbrLife: player.numberOfLife, toremove: false };
       }
       const newPosition = {
         x: player.position.x + direction.x,
         y: player.position.y + direction.y
       }
-      if (this.boardManager.isValidMove(newPosition)) {
+      const moveResult = this.boardManager.isValidMove(newPosition);
+      if (moveResult.valid) {
+        const cell = moveResult.cellType;
         player.move(direction, newPosition);
-        return { id: player.id, position: newPosition };
+        if (cell == 'S') {
+          player.currentBombType = "super"
+          this.boardManager.makeCellEmpty(newPosition);
+          toremove = true
+        }else if (cell == 'M') {
+          if (player.numberOfLife < 3) {
+            player.numberOfLife+=1;
+            toremove = true
+            this.boardManager.makeCellEmpty(newPosition);
+          }
+        }else if (cell == 'X') {
+          if (player.availableBombs < 3 && player.bombAmount < 3) {
+            player.bombAmount+=1
+            player.availableBombs+=1
+            this.boardManager.makeCellEmpty(newPosition);
+            toremove = true
+          }
+        }
+        return { id: player.id, position: newPosition, nbrLife: player.numberOfLife, toremove: toremove };
       }
     }
-    return { id: player.id, position: null };
+    return { id: player.id, position: null, nbrLife: player.numberOfLife, toremove: false };
   }
 
   getPlayerByAccess(access) {
@@ -99,8 +120,11 @@ export default class Game {
       this.boardManager.setCell(player.position, "B");
       player.availableBombs--;
       if (player.currentBombType === "manual") {
-        this.bombManager.makeManual(bomb.id)
+        console.log('manual');
       } else {
+        if (player.bombType === "super") {
+          bomb.explosionRadius = 2;
+        }
         setTimeout(() => {
           this.explodeBomb(bomb)
           sendExplodeBomb(bomb, { x: bomb.x, y: bomb.y });
@@ -110,6 +134,7 @@ export default class Game {
           setTimeout(() => {
             console.log("⛔ ⛔ ⛔ ⛔ ⛔ EXPLOSION ⛔ ⛔ ⛔ ⛔ ⛔");
             player.availableBombs = player.bombAmount;
+            player.currentBombType = "simple"
 
             let keepUpDirection = true;
             let keepDownDirection = true;
@@ -147,6 +172,7 @@ export default class Game {
               }
             }
           }, 255);
+          
         }, 1500);
       }
 
