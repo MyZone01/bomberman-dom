@@ -217,7 +217,11 @@ export default class SocketHandler {
           this.timer=10
           this.starGame=true
         }
-        if (this.timer<0 || this.game.numberOfPlayer >= 4) {
+        if (this.game.numberOfPlayer >= 4 && !this.starGame) {
+          this.timer=10
+          this.starGame=true
+        }
+        if (this.timer<0) {
            clearInterval(intervalTimer)
            //  start the game
            this.clients.forEach((client) => {
