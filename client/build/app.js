@@ -230,7 +230,10 @@ class page extends HTMLElement {
   messages:[],
   inputData : '',
   currentP:'',
-  timer:20
+  timer:0,
+  isListening:true,
+  isOpen: true,
+  ws:''
 }"
 >
   <div class="player-settings" x-if="!$isconecte">
@@ -266,46 +269,51 @@ class page extends HTMLElement {
                 nickname: $namePlayer,
                 emoji:$selectedemoji
               }
-              window.ws = new WebSocket('ws://localhost:8080');
-      
-              window.ws.onopen = function(event) {
-              console.log('Connected to server',player);
-              window.ws.send(JSON.stringify({
-                  type: 'create-player',
-                  payload: player
-                }))
-              };
-              window.ws.onmessage = function(event) {
-                let data=JSON.parse(event.data)
-                if (data?.type ==='create-successfully') {
-                  $isconecte=true
-                  $messages=data?.payload?.messages|| []
-                  window.currentPId=data?.payload?.access
-                  $currentP=data?.payload?.id
-                  return
-                }
-                if (data?.type ==='chat'){
-                  $messages=data?.payload?.messages || []
-                  console.log('messages ',$messages);
-                  return
-                }
-                if (data?.type ==='new-player'){
-                  $players=data?.payload?.players
-                  console.log('new player',$players);
-                  return
-                }
-                if (data?.type ==='timer'){
-                  $timer=data?.payload?.timer
-                  console.log('timer',$timer);
-                  return
-                }
-                window.ws=null
-                $errorform=data?.payload
-                console.log($errorform);
-                return
-              };
+              if ($isListening) {
+                window.ws = new WebSocket('ws://localhost:8080');
+                $ws= window.ws
+        
+                // window.ws.onopen = function(event) {
+                //   console.log('Connected to server',player);
+                //   $isListening=false
+                // };
+                $ws.addEventListener('open', () => {
+                  console.log('Connected to server',player);
+                  $isListening=false
+                  $ws.send(JSON.stringify({
+                      type: 'create-player',
+                      payload: player
+                    }))
+                });
+                $ws.onmessage = function(event) {
+                  let data=JSON.parse(event.data)
+                  if (data?.type ==='create-successfully') {
+                    $isconecte=true
+                    $messages=data?.payload?.messages|| []
+                    window.currentPId=data?.payload?.id
+                    $currentP=data?.payload?.id
+                  }else if (data?.type ==='chat'){
+                    console.log('new message',data?.payload);
+                    $messages=[...data?.payload?.messages] || []
+                    
+                  }else if (data?.type ==='new-player'){
+                    $players=data?.payload?.players
+                    console.log('new player',$players);
+                    
+                  }else if (data?.type ==='timer'){
+                    $timer=data?.payload?.timer
+                    console.log('timer',$timer);
+                    
+                  }else
+                  $ws=null
+                  $errorform=data?.payload
+                  console.log($errorform);
+                  
+                };
+              }
+            }else{
+              $errorform='A name and a emoji is needed'
             }
-            $errorform='A name and a emoji is needed'
 
         "
     >
@@ -332,19 +340,19 @@ class page extends HTMLElement {
           x-for="messagePlayer, key in $messages"
           >
             <div class="received" >
-              <span class="avatar"  x-text="messagePlayer.player.emoji"></span>
+              <span class="avatar"  x-text="messagePlayer.player.avatar"></span>
               <div class="message new">
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @<span x-text="messagePlayer.player.nickname"></span></div>
               </div>
             </div>
-            <!-- <div class="message new message-personal" x-else>
-              <span class="avatar" x-text="messagePlayer.player.emoji"></span>
+            <div class="message new message-personal" x-else>
+              <span class="avatar" x-text="messagePlayer.player.avatar"></span>
               <div class="message new">
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @ <span x-text="messagePlayer.player.nickname"></span></div>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
         <div class="message-box">
@@ -357,15 +365,19 @@ class page extends HTMLElement {
            
           />
           <button type="submit" class="message-submit" @click="
-            let message={
+          
+          let message={
                 content: $inputData,
-                userId: window.currentPId
+                userId:''
               }
-              console.log(message);
-              window.ws.send(JSON.stringify({
+              console.log('message to send',message);
+              $ws.send(JSON.stringify({
                   type: 'chat',
                   payload: message
               }))
+              const element = document.querySelector('.message-submit');
+              const newElement = element.cloneNode(true);  // Clone with all attributes
+              element.parentNode.replaceChild(newElement, element);
           ">Send</button>
         </div>
       </div>
@@ -889,9 +901,12 @@ window.hubble = {
           } else {
             const event = name.substring(1);
             const _value = value.replaceAll('$', 'hubble.data[uuid].')
-            el.addEventListener(event, (e) => {
-              eval(_value)
-            })
+            function handler(e) {
+              eval(_value);
+            };
+            el.removeEventListener(event, handler)
+            
+            el.addEventListener(event, handler)
           }
         }
       }

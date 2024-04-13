@@ -166,9 +166,12 @@ window.hubble = {
           } else {
             const event = name.substring(1);
             const _value = value.replaceAll('$', 'hubble.data[uuid].')
-            el.addEventListener(event, (e) => {
-              eval(_value)
-            })
+            function handler(e) {
+              eval(_value);
+            };
+            el.removeEventListener(event, handler)
+            
+            el.addEventListener(event, handler)
           }
         }
       }

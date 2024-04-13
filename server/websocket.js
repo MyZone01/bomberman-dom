@@ -5,11 +5,13 @@ import PlayersManager from "./core/playerManager.js";
 export default class SocketHandler {
   constructor(game) {
     this.game = game;
-    this.clients = new Map();
-    this.PlayersManage = new PlayersManager();
     this.messages = [];
     this.timer = 20;
     this.currenid = 0;
+    this.initialConnection=true
+    
+    this.clients = new Map();
+    this.PlayersManage = new PlayersManager();
     this.wss = new WebSocketServer({ port: 8080 });
     this.onConnection = this.onConnection.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
@@ -17,27 +19,40 @@ export default class SocketHandler {
     this.wss.on("connection", this.onConnection);
   }
 
-  async onConnection(ws) {
-    console.log("Client connected");
+  onConnection(ws) {
+    if (this.game.numberOfPlayer >= 4) { 
+      this.sendMessage(
+        ws,
+        "only 4 user in authorise to play game",
+        "not-authorise"
+      );
+      return;
+    }
+
     const id = uuid();
     this.clients.set(id, ws);
     this.currenid = id;
-    await ws.on("message", this.handleMessage);
-    // ws.send(JSON.stringify({
-    //   type: "create-successfully",
-    //   payload: { access: id }
-    // }));
+    ws.on("message", this.handleMessage);
 
-    // let intervalTimer= setInterval(()=>{
-    //   if (this.timer<0) {
-    //      clearInterval(intervalTimer)
-    //      //  start the game
-    //      return
-    //    }
-    //     // check if client is ready
-    //     this.sendMessage(ws,{timer:this.timer},"timer")
-    //    this.timer--
-    //  },1000)
+    if (this.initialConnection) {
+      let intervalTimer= setInterval(()=>{
+        // if (this.timer<0 && this.game.numberOfPlayer < 4) {
+          
+        // }
+        if (this.timer<0 || this.game.numberOfPlayer >= 4) {
+           clearInterval(intervalTimer)
+           //  start the game
+           return
+        }
+
+        this.clients.forEach((client) => {
+          this.sendMessage(client, {timer:this.timer}, "timer");
+        });
+          
+         this.timer--
+       },1000)
+      this.initialConnection=false
+    }
   }
 
   handleMessage(_message) {
@@ -67,17 +82,13 @@ export default class SocketHandler {
   }
   createNewPlayer(message) {
     console.log("Create User:", message);
-    const access = message.payload.access;
-    const nickname = message.payload.nickname || this.currenid;
+    const access = message.payload.access || this.currenid;;
+    const nickname = message.payload.nickname 
     const emoji = message.payload.emoji;
     const client = this.clients.get(this.currenid);
     if (client) {
       const player = this.game.addPlayer(access, nickname, emoji);
       this.register(message, client, player);
-      // client.send(JSON.stringify({
-      //     type: 'create-player-success',
-      //     payload: player
-      // }));
       return;
     }
   }
@@ -166,15 +177,7 @@ export default class SocketHandler {
 
   register(message, ws, player) {
     const newPlayer = message.payload;
-    if (this.PlayersManage.players.length >= 4) {
-      this.sendMessage(
-        ws,
-        "only 4 user in authorise to play game",
-        "not-authorise"
-      );
-      return;
-    }
-    if (this.PlayersManage.getPlayerByname(newPlayer?.name)) {
+    if (this.PlayersManage.getPlayerByname(newPlayer?.nickname)) {
       this.sendMessage(
         ws,
         "username alredy existe. Chose an other",
@@ -182,7 +185,6 @@ export default class SocketHandler {
       );
       return;
     }
-
     // const id = crypto.randomUUID();
     // const player = new Player(id, newPlayer.name, newPlayer.emoji);
     this.PlayersManage.addPlayer(player);
@@ -208,12 +210,13 @@ export default class SocketHandler {
   }
 
   chat(data) {
-    let player = this.PlayersManage.getPlayerById(data.userId);
+    console.log(data);
+    let player = this.PlayersManage.getPlayerByAccess(data.userId);
     let message = { content: data.content, player };
     this.messages.push(message);
     console.log(this.messages);
     this.clients.forEach((client) => {
-      this.sendMessage(client, message, "chat");
+      this.sendMessage(client, {messages:this.messages}, "chat");
     });
   }
 }
