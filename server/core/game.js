@@ -46,10 +46,10 @@ export default class Game {
     return null;
   }
 
-  addPlayer(access, nickname,emoji) {
+  addPlayer(access, nickname) {
     const id = 'player-' + this.numberOfPlayer;
     const position = playerDefaultPosition[this.numberOfPlayer];
-    const avatar = emoji;
+    const avatar = ['😆', '🤢', '😡', '🥶'][this.numberOfPlayer];
     this.numberOfPlayer++;
     const player = new Player(id, access, nickname, position, avatar);
     this.playerManager.addPlayer(player)

@@ -11,9 +11,11 @@ export default class Player {
     this.bombAmount = 1;
     this.availableBombs = this.bombAmount;
   }
+
   isDeath() {
     return this.numberOfLife === 0
   }
+
   move(direction, newPosition) {
     this.inputDirection = direction;
     setTimeout(() => {
