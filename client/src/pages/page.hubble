@@ -297,7 +297,6 @@
             }else{
               $errorform='A name and a emoji is needed'
             }
-
         "
     >
       Start
