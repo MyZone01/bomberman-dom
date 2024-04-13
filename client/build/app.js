@@ -273,10 +273,6 @@ class page extends HTMLElement {
                 window.ws = new WebSocket('ws://localhost:8080');
                 $ws= window.ws
         
-                // window.ws.onopen = function(event) {
-                //   console.log('Connected to server',player);
-                //   $isListening=false
-                // };
                 $ws.addEventListener('open', () => {
                   console.log('Connected to server',player);
                   $isListening=false
@@ -339,9 +335,9 @@ class page extends HTMLElement {
           <div class="messages-content" 
           x-for="messagePlayer, key in $messages"
           >
-            <div class="received" >
+            <div class="received" x-if="messagePlayer.player.access!== $currentP" >
               <span class="avatar"  x-text="messagePlayer.player.avatar"></span>
-              <div class="message new">
+              <div class="message new" >
                 <span x-text="messagePlayer.content"></span>
                 <div class="sender">by @<span x-text="messagePlayer.player.nickname"></span></div>
               </div>
@@ -368,16 +364,13 @@ class page extends HTMLElement {
           
           let message={
                 content: $inputData,
-                userId:''
+                userId:$currentP
               }
               console.log('message to send',message);
               $ws.send(JSON.stringify({
                   type: 'chat',
                   payload: message
               }))
-              const element = document.querySelector('.message-submit');
-              const newElement = element.cloneNode(true);  // Clone with all attributes
-              element.parentNode.replaceChild(newElement, element);
           ">Send</button>
         </div>
       </div>
@@ -901,12 +894,13 @@ window.hubble = {
           } else {
             const event = name.substring(1);
             const _value = value.replaceAll('$', 'hubble.data[uuid].')
-            function handler(e) {
-              eval(_value);
-            };
-            el.removeEventListener(event, handler)
-            
-            el.addEventListener(event, handler)
+            if (!el.hasAttribute('data-event-fired')) {
+              function handler(e) {
+                eval(_value);
+              };
+              el.addEventListener(event, handler)
+              el.setAttribute('data-event-fired', 'true')
+            } 
           }
         }
       }

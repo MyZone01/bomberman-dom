@@ -6,9 +6,10 @@ export default class SocketHandler {
   constructor(game) {
     this.game = game;
     this.messages = [];
-    this.timer = 20;
+    this.timer = 19;
     this.currenid = 0;
     this.initialConnection=true
+    this.starGame=false
     
     this.clients = new Map();
     this.PlayersManage = new PlayersManager();
@@ -36,9 +37,10 @@ export default class SocketHandler {
 
     if (this.initialConnection) {
       let intervalTimer= setInterval(()=>{
-        // if (this.timer<0 && this.game.numberOfPlayer < 4) {
-          
-        // }
+        if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
+          this.timer=10
+          this.starGame=true
+        }
         if (this.timer<0 || this.game.numberOfPlayer >= 4) {
            clearInterval(intervalTimer)
            //  start the game
@@ -210,11 +212,10 @@ export default class SocketHandler {
   }
 
   chat(data) {
-    console.log(data);
+
     let player = this.PlayersManage.getPlayerByAccess(data.userId);
     let message = { content: data.content, player };
     this.messages.push(message);
-    console.log(this.messages);
     this.clients.forEach((client) => {
       this.sendMessage(client, {messages:this.messages}, "chat");
     });
