@@ -6,7 +6,7 @@ export default class SocketHandler {
   constructor(game) {
     this.game = game;
     this.messages = [];
-    this.timer = 19;
+    this.timer = 39;
     this.currenid = 0;
     this.initialTimer=true
     this.starGame=false
@@ -214,7 +214,8 @@ export default class SocketHandler {
     if (this.initialTimer && this.game.numberOfPlayer>1 ) {
       let intervalTimer= setInterval(()=>{
         if (this.game.numberOfPlayer >= 4 && !this.starGame) {
-          this.timer=0
+          this.timer=10
+          this.starGame=true
         }
         if (this.timer<0 && this.game.numberOfPlayer < 4 && !this.starGame) {
           this.timer=10
