@@ -116,21 +116,7 @@ export default class Game {
     return null;
   }
 
-  applyDamagedToPlayer(bomb) {
-    const radius = bomb.explosionRadius;
-
-    this.playerManager.players.forEach(player => {
-      if ((player.position.x <= bomb.x + radius && player.position.x >= bomb.x - radius) && (player.position.y <= bomb.y + radius && player.position.y >= bomb.y - radius) && (player.position.x == bomb.x || player.position.y == bomb.y)) {
-        player.numberOfLife--;
-        bomb.addDamagedPlayer(player);
-      }
-    });
-
-    return null;
-  }
-
   explodeBomb(bomb, player, sendExplodeBomb) {
-    this.applyDamagedToPlayer(bomb);
     this.bombManager.removeBomb(bomb.id);
     this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V", true);
 
@@ -142,11 +128,22 @@ export default class Game {
       let keepLeftDirection = true;
       let keepRightDirection = true;
 
+      this.playerManager.players.forEach(player => {
+        if (player.position.x === bomb.x && player.position.y === bomb.y) {
+          bomb.applyDamagedToPlayer(player);
+        }
+      });
+
       for (let i = 1; i <= bomb.explosionRadius; i++) {
         if (keepUpDirection) {
           const upPosition = { x: bomb.x, y: bomb.y - i };
           const cell = this.boardManager.getCell(upPosition);
           keepUpDirection = !isDirectionValid(cell); // Up
+          this.playerManager.players.forEach(player => {
+            if (player.position.x === upPosition.x && player.position.y === upPosition.y) {
+              bomb.applyDamagedToPlayer(player);
+            }
+          });
           if (cell.startsWith("W")) {
             this.boardManager.removeWall(upPosition);
           } else {
@@ -161,6 +158,11 @@ export default class Game {
           const downPosition = { x: bomb.x, y: bomb.y + i };
           const cell = this.boardManager.getCell(downPosition);
           keepDownDirection = !isDirectionValid(cell); // Down
+          this.playerManager.players.forEach(player => {
+            if (player.position.x === downPosition.x && player.position.y === downPosition.y) {
+              bomb.applyDamagedToPlayer(player);
+            }
+          });
           if (cell.startsWith("W")) {
             this.boardManager.removeWall(downPosition);
           } else {
@@ -175,6 +177,11 @@ export default class Game {
           const leftPosition = { x: bomb.x - i, y: bomb.y };
           const cell = this.boardManager.getCell(leftPosition);
           keepLeftDirection = !isDirectionValid(cell); // Left
+          this.playerManager.players.forEach(player => {
+            if (player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
+              bomb.applyDamagedToPlayer(player);
+            }
+          });
           if (cell.startsWith("W")) {
             this.boardManager.removeWall(leftPosition);
           } else {
@@ -189,6 +196,11 @@ export default class Game {
           const rightPosition = { x: bomb.x + i, y: bomb.y };
           const cell = this.boardManager.getCell(rightPosition);
           keepRightDirection = !isDirectionValid(cell); // Right
+          this.playerManager.players.forEach(player => {
+            if (player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
+              bomb.applyDamagedToPlayer(player);
+            }
+          });
           if (cell.startsWith("W")) {
             this.boardManager.removeWall(rightPosition);
           } else {

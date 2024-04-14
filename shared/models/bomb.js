@@ -8,7 +8,11 @@ export default class Bomb {
     this.damagedPlayer = [];
   }
 
-  addDamagedPlayer(player) {
+  applyDamagedToPlayer(player) {
+    if (this.damagedPlayer.includes(player)) {
+      return;
+    }
+    player.numberOfLife--;
     this.damagedPlayer.push(player);
   }
 }
