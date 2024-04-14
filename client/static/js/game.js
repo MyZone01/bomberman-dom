@@ -100,8 +100,8 @@ export default class Game {
     const element = document.createElement("div");
     element.classList.add("bomb");
     element.setAttribute("id", bomb.id);
-    element.style.gridRowStart = bomb.position.y;
-    element.style.gridColumnStart = bomb.position.x;
+    element.style.gridRowStart = bomb.y;
+    element.style.gridColumnStart = bomb.x;
 
     const verticalBlast = document.createElement("div")
     const horizontalBlast = document.createElement("div")
@@ -128,28 +128,28 @@ export default class Game {
 
     for (let i = 1; i <= bomb.radius; i++) {
       if (keepUpDirection) {
-        keepUpDirection = this.explodeInDirection(bomb.position.x, bomb.position.y - i); // Up
+        keepUpDirection = this.explodeInDirection(bomb.x, bomb.y - i); // Up
         if (keepUpDirection) {
           verticalBlast.style.opacity = "1"
           verticalBlast.style.top = `-${i * 100}%`
         }
       }
       if (keepDownDirection) {
-        keepDownDirection = this.explodeInDirection(bomb.position.x, bomb.position.y + i); // Down
+        keepDownDirection = this.explodeInDirection(bomb.x, bomb.y + i); // Down
         if (keepDownDirection) {
           verticalBlast.style.opacity = "1"
           verticalBlast.style.bottom = `-${i * 100}%`
         }
       }
       if (keepLeftDirection) {
-        keepLeftDirection = this.explodeInDirection(bomb.position.x - i, bomb.position.y); // Left
+        keepLeftDirection = this.explodeInDirection(bomb.x - i, bomb.y); // Left
         if (keepLeftDirection) {
           horizontalBlast.style.opacity = "1"
           horizontalBlast.style.left = `-${i * 100}%`
         }
       }
       if (keepRightDirection) {
-        keepRightDirection = this.explodeInDirection(bomb.position.x + i, bomb.position.y); // Right
+        keepRightDirection = this.explodeInDirection(bomb.x + i, bomb.y); // Right
         if (keepRightDirection) {
           horizontalBlast.style.opacity = "1"
           horizontalBlast.style.right = `-${i * 100}%`
@@ -160,10 +160,8 @@ export default class Game {
     setTimeout(() => {
       this.gameBoard.removeChild(element);
     }, 255);
-    console.log('BOMB DAMAGED PLAYER(S):', bomb.damagedPlayer);
-    // TODO: TRIGGER DAMAGE ANIMATION FOR PLAYER(S) DAMAGED BY BOMB
-    if (bomb.damagedPlayer.length > 0) {
 
+    if (bomb.damagedPlayer.length > 0) {
       bomb.damagedPlayer.forEach(player => {
         let playerElement = document.getElementById(player.id)
         const blinkInterval = setInterval(() => {
@@ -174,11 +172,10 @@ export default class Game {
           }
         }, 200);
 
-        // Arrêter le clignotement après 5 secondes (ou toute autre durée souhaitée)
         setTimeout(() => {
           clearInterval(blinkInterval);
-          playerElement.style.visibility = "visible"; // Assurez-vous que le joueur soit visible à la fin du clignotement
-        }, 3000); // 5 secondes
+          playerElement.style.visibility = "visible";
+        }, 3000);
         updatePlayerLives(player.id, player.numberOfLife)
       });
     }
@@ -187,9 +184,6 @@ export default class Game {
 
   explodeInDirection(x, y) {
     const isDestroyWall = destroyWall(x, y);
-    // if (isDestroyWall === 1) {
-    //   this.damageScore += 10
-    // }
     return isDestroyWall !== 0
   }
 

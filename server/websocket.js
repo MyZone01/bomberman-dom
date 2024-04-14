@@ -1,19 +1,20 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { uuid } from "./utils/helper.js";
 import PlayersManager from "./core/playerManager.js";
+import { MAX_PLAYERS, SERVER_PORT, WAITING_TIME } from "../shared/constants.js";
 
 export default class SocketHandler {
   constructor(game) {
     this.game = game;
     this.messages = [];
-    this.timer = 10;
+    this.timer = WAITING_TIME;
     this.currentId = 0;
     this.initialTimer = true
     this.starGame = false
 
     this.clients = new Map();
     this.PlayersManage = new PlayersManager();
-    this.wss = new WebSocketServer({ port: 8080 });
+    this.wss = new WebSocketServer({ port: SERVER_PORT });
     this.onConnection = this.onConnection.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
     this.CreateNewUser = this.createNewPlayer.bind(this);
@@ -21,7 +22,7 @@ export default class SocketHandler {
   }
 
   onConnection(ws) {
-    if (this.game.numberOfPlayer >= 4) {
+    if (this.game.numberOfPlayer >= MAX_PLAYERS) {
       this.sendMessage(
         ws,
         "only 4 user in authorize to play game",
@@ -144,7 +145,6 @@ export default class SocketHandler {
     const access = message.payload.access;
     const client = this.clients.get(access);
     if (client) {
-      console.log("Game is started");
       this.clients.forEach((c) => {
         c.send(
           JSON.stringify({
@@ -175,7 +175,6 @@ export default class SocketHandler {
     }
 
     this.PlayersManage.addPlayer(player);
-    console.log("list of player", player);
     this.sendMessage(ws, { id: this.currentId }, "create-successfully");
 
     this.clients.forEach((client) => {
@@ -207,15 +206,14 @@ export default class SocketHandler {
   }
 
   timerStart() {
-    console.log("number of player", this.game.numberOfPlayer);
     if (this.initialTimer && this.game.numberOfPlayer > 1) {
       let intervalTimer = setInterval(() => {
         if (this.game.numberOfPlayer >= 4 && !this.starGame) {
-          this.timer = 5
+          this.timer = 10
           this.starGame = true
         }
-        if (this.timer < 0 && this.game.numberOfPlayer < 4 && !this.starGame) {
-          this.timer = 5
+        if (this.timer < 0 && this.game.numberOfPlayer < MAX_PLAYERS && !this.starGame) {
+          this.timer = 10
           this.starGame = true
         }
         if (this.timer < 0) {

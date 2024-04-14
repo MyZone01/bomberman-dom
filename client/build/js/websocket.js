@@ -1,7 +1,6 @@
 export default class SocketHandler {
   constructor(game) {
     this.game = game
-    console.log("socket in ", window.ws);
     this.ws = window.ws || null;
     this.game.playAccess = window.access
     this.ws.addEventListener('error', function (event) {

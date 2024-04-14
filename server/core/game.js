@@ -3,7 +3,7 @@ import BombManager from "./bombManager.js";
 import PlayerManager from "./playerManager.js";
 import TaskScheduler from "./taskScheduler.js";
 import Player from "../../shared/models/player.js";
-import { GRID_SIZE } from "../../shared/constants.js";
+import { BOMB_TIMER, GRID_SIZE } from "../../shared/constants.js";
 
 const playerDefaultPosition = [
   { x: 2, y: 2 },
@@ -108,7 +108,7 @@ export default class Game {
         if (player.bombType === "super") {
           bomb.explosionRadius = 2;
         }
-        this.taskScheduler.scheduleTask(bomb.id, () => this.explodeBomb(bomb, player, sendExplodeBomb), 1500);
+        this.taskScheduler.scheduleTask(bomb.id, () => this.explodeBomb(bomb, player, sendExplodeBomb), BOMB_TIMER);
         this.taskScheduler.startTask(bomb.id);
       }
       return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
@@ -119,101 +119,98 @@ export default class Game {
   explodeBomb(bomb, player, sendExplodeBomb) {
     this.bombManager.removeBomb(bomb.id);
     this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V", true);
+    player.availableBombs = player.bombAmount;
 
-    setTimeout(() => {
-      player.availableBombs = player.bombAmount;
+    let keepUpDirection = true;
+    let keepDownDirection = true;
+    let keepLeftDirection = true;
+    let keepRightDirection = true;
 
-      let keepUpDirection = true;
-      let keepDownDirection = true;
-      let keepLeftDirection = true;
-      let keepRightDirection = true;
+    this.playerManager.players.forEach(player => {
+      if (player.position.x === bomb.x && player.position.y === bomb.y) {
+        bomb.applyDamagedToPlayer(player);
+      }
+    });
 
-      this.playerManager.players.forEach(player => {
-        if (player.position.x === bomb.x && player.position.y === bomb.y) {
-          bomb.applyDamagedToPlayer(player);
-        }
-      });
-
-      for (let i = 1; i <= bomb.explosionRadius; i++) {
-        if (keepUpDirection) {
-          const upPosition = { x: bomb.x, y: bomb.y - i };
-          const cell = this.boardManager.getCell(upPosition);
-          keepUpDirection = !isDirectionValid(cell); // Up
-          this.playerManager.players.forEach(player => {
-            if (player.position.x === upPosition.x && player.position.y === upPosition.y) {
-              bomb.applyDamagedToPlayer(player);
-            }
-          });
-          if (cell.startsWith("W")) {
-            this.boardManager.removeWall(upPosition);
-          } else {
-            const autoExposedBomb = this.bombManager.getBombIdAtPosition(upPosition);
-            if (autoExposedBomb) {
-              this.taskScheduler.cancelTask(autoExposedBomb.id);
-              this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
-            }
+    for (let i = 1; i <= bomb.explosionRadius; i++) {
+      if (keepUpDirection) {
+        const upPosition = { x: bomb.x, y: bomb.y - i };
+        const cell = this.boardManager.getCell(upPosition);
+        keepUpDirection = !isDirectionValid(cell); // Up
+        this.playerManager.players.forEach(player => {
+          if (player.position.x === upPosition.x && player.position.y === upPosition.y) {
+            bomb.applyDamagedToPlayer(player);
           }
-        }
-        if (keepDownDirection) {
-          const downPosition = { x: bomb.x, y: bomb.y + i };
-          const cell = this.boardManager.getCell(downPosition);
-          keepDownDirection = !isDirectionValid(cell); // Down
-          this.playerManager.players.forEach(player => {
-            if (player.position.x === downPosition.x && player.position.y === downPosition.y) {
-              bomb.applyDamagedToPlayer(player);
-            }
-          });
-          if (cell.startsWith("W")) {
-            this.boardManager.removeWall(downPosition);
-          } else {
-            const autoExposedBomb = this.bombManager.getBombIdAtPosition(downPosition);
-            if (autoExposedBomb) {
-              this.taskScheduler.cancelTask(autoExposedBomb.id);
-              this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
-            }
-          }
-        }
-        if (keepLeftDirection) {
-          const leftPosition = { x: bomb.x - i, y: bomb.y };
-          const cell = this.boardManager.getCell(leftPosition);
-          keepLeftDirection = !isDirectionValid(cell); // Left
-          this.playerManager.players.forEach(player => {
-            if (player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
-              bomb.applyDamagedToPlayer(player);
-            }
-          });
-          if (cell.startsWith("W")) {
-            this.boardManager.removeWall(leftPosition);
-          } else {
-            const autoExposedBomb = this.bombManager.getBombIdAtPosition(leftPosition);
-            if (autoExposedBomb) {
-              this.taskScheduler.cancelTask(autoExposedBomb.id);
-              this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
-            }
-          }
-        }
-        if (keepRightDirection) {
-          const rightPosition = { x: bomb.x + i, y: bomb.y };
-          const cell = this.boardManager.getCell(rightPosition);
-          keepRightDirection = !isDirectionValid(cell); // Right
-          this.playerManager.players.forEach(player => {
-            if (player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
-              bomb.applyDamagedToPlayer(player);
-            }
-          });
-          if (cell.startsWith("W")) {
-            this.boardManager.removeWall(rightPosition);
-          } else {
-            const autoExposedBomb = this.bombManager.getBombIdAtPosition(rightPosition);
-            if (autoExposedBomb) {
-              this.taskScheduler.cancelTask(autoExposedBomb.id);
-              this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
-            }
+        });
+        if (cell.startsWith("W")) {
+          this.boardManager.removeWall(upPosition);
+        } else {
+          const autoExposedBomb = this.bombManager.getBombIdAtPosition(upPosition);
+          if (autoExposedBomb) {
+            this.taskScheduler.cancelTask(autoExposedBomb.id);
+            this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
           }
         }
       }
-    }, 62.5);
-    sendExplodeBomb(bomb, { x: bomb.x, y: bomb.y });
+      if (keepDownDirection) {
+        const downPosition = { x: bomb.x, y: bomb.y + i };
+        const cell = this.boardManager.getCell(downPosition);
+        keepDownDirection = !isDirectionValid(cell); // Down
+        this.playerManager.players.forEach(player => {
+          if (player.position.x === downPosition.x && player.position.y === downPosition.y) {
+            bomb.applyDamagedToPlayer(player);
+          }
+        });
+        if (cell.startsWith("W")) {
+          this.boardManager.removeWall(downPosition);
+        } else {
+          const autoExposedBomb = this.bombManager.getBombIdAtPosition(downPosition);
+          if (autoExposedBomb) {
+            this.taskScheduler.cancelTask(autoExposedBomb.id);
+            this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
+          }
+        }
+      }
+      if (keepLeftDirection) {
+        const leftPosition = { x: bomb.x - i, y: bomb.y };
+        const cell = this.boardManager.getCell(leftPosition);
+        keepLeftDirection = !isDirectionValid(cell); // Left
+        this.playerManager.players.forEach(player => {
+          if (player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
+            bomb.applyDamagedToPlayer(player);
+          }
+        });
+        if (cell.startsWith("W")) {
+          this.boardManager.removeWall(leftPosition);
+        } else {
+          const autoExposedBomb = this.bombManager.getBombIdAtPosition(leftPosition);
+          if (autoExposedBomb) {
+            this.taskScheduler.cancelTask(autoExposedBomb.id);
+            this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
+          }
+        }
+      }
+      if (keepRightDirection) {
+        const rightPosition = { x: bomb.x + i, y: bomb.y };
+        const cell = this.boardManager.getCell(rightPosition);
+        keepRightDirection = !isDirectionValid(cell); // Right
+        this.playerManager.players.forEach(player => {
+          if (player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
+            bomb.applyDamagedToPlayer(player);
+          }
+        });
+        if (cell.startsWith("W")) {
+          this.boardManager.removeWall(rightPosition);
+        } else {
+          const autoExposedBomb = this.bombManager.getBombIdAtPosition(rightPosition);
+          if (autoExposedBomb) {
+            this.taskScheduler.cancelTask(autoExposedBomb.id);
+            this.explodeBomb(autoExposedBomb, player, sendExplodeBomb)
+          }
+        }
+      }
+    }
+    sendExplodeBomb(bomb);
   }
 
 }
