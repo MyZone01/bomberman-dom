@@ -42,8 +42,8 @@
     - [x] walls,
     - [x] players.
     - [ ] enemies
-  - [ ] **Handle Death:** Update the game board and HUD to reflect the death of entities.
-  - [ ] **Activate/Deactivate Power-Ups:** Update the HUD to reflect the activation or deactivation of power-up items.
+  - [x] **Handle Death:** Update the game board and HUD to reflect the death of entities.
+  - [x] **Activate/Deactivate Power-Ups:** Update the HUD to reflect the activation or deactivation of power-up items.
   - [ ] **Move Enemies:** Implement server-side logic to handle enemy movement and notify all players.
   - [ ] **Show Enemy Movement:** Update the game board to reflect enemy movement.
 

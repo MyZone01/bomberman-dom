@@ -6,6 +6,29 @@ export default class Game {
     this.playAccess = "";
     this.currentPlayer = null;
     this.gameBoard = document.getElementById('game-board')
+    this.gameOverModal = document.getElementById('game-over')
+    this.controller = new AbortController();
+  }
+
+  gameOver(gameOverInfos) {
+    if (gameOverInfos.result === "win") {
+      this.showGameOver("💥 CONGRATULATION!")
+    } else {
+      const element = document.getElementById(gameOverInfos.id);
+      this.gameBoard.removeChild(element);
+      if (this.currentPlayer === gameOverInfos.id) {
+        this.controller.abort();
+        this.showGameOver("💀 LOOSER!")
+      } else {
+        this.showGameOver(gameOverInfos.nickname + " IS DEAD!")
+      }
+    }
+  }
+
+  showGameOver(text) {
+    this.gameOverModal.style.display = "block";
+    this.gameOverModal.innerHTML = text
+    this.hideGameOverModal = setTimeout(() => this.gameOverModal.innerHTML = "", 3000)
   }
 
   setCurrentPlayer(player) {
@@ -203,25 +226,25 @@ export default class Game {
           sendPlayerMove({ x: 1, y: 0 });
           break;
       }
-    });
+    }, { signal: this.controller.signal });
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
         case " ":
+          console.log("key up", e.key);
           senAddBomb();
           break;
       }
-    });
+    }, { signal: this.controller.signal });
   }
 }
 
 export function destroyWall(x, y) {
   const cell = document.getElementById(`c-${y}-${x}`);
-  console.log(cell);
+
   if (cell && cell.classList.contains("wall")) {
     cell.classList.add("explode");
     setTimeout(() => {
       const powerUp = cell.getAttribute("data-power")
-      console.log(x, y, powerUp);
       if (powerUp) {
         cell.classList.remove("explode");
         cell.classList.remove("wall");

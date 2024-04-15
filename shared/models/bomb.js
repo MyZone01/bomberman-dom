@@ -9,10 +9,13 @@ export default class Bomb {
   }
 
   applyDamagedToPlayer(player) {
-    if (this.damagedPlayer.includes(player)) {
+    if (this.damagedPlayer.some((p) => p.id === player.id)) {
       return;
     }
     player.numberOfLife--;
-    this.damagedPlayer.push(player);
+    this.damagedPlayer.push({
+      id: player.id,
+      numberOfLife: player.numberOfLife
+    });
   }
 }

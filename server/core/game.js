@@ -21,6 +21,8 @@ export default class Game {
     this.boardManager = new BoardManager();
 
     this.taskScheduler = new TaskScheduler();
+
+    this.sendGameOver = null;
   }
 
   board() {
@@ -110,7 +112,6 @@ export default class Game {
   addBomb(access, sendExplodeBomb) {
     const player = this.playerManager.getPlayerByAccess(access);
     if (player && !player.isDeath()) {
-      console.log(">>>>>>>>>>>>>>>>> MANUAL", player.currentManualBomb);
       if (player.currentManualBomb !== 0) {
         const bomb = this.bombManager.getBombByID(player.currentManualBomb);
         player.currentManualBomb = 0;
@@ -122,9 +123,8 @@ export default class Game {
         player.availableBombs--;
         if (player.currentBombType === "manual") {
           player.currentManualBomb = bomb.id;
-          console.log("ADD BOMB", player.currentBombType, player.currentManualBomb, bomb.id);
           bomb.manualBomb = true
-        } else { 
+        } else {
           if (player.bombType === "super") {
             bomb.explosionRadius = 3;
           }
@@ -148,8 +148,11 @@ export default class Game {
     let keepRightDirection = true;
 
     this.playerManager.players.forEach(player => {
-      if (player.position.x === bomb.x && player.position.y === bomb.y) {
+      if (!player.isDeath() && player.position.x === bomb.x && player.position.y === bomb.y) {
         bomb.applyDamagedToPlayer(player);
+        if (player.isDeath) {
+          this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
+        }
       }
     });
 
@@ -159,8 +162,11 @@ export default class Game {
         const cell = this.boardManager.getCell(upPosition);
         keepUpDirection = !isDirectionValid(cell); // Up
         this.playerManager.players.forEach(player => {
-          if (player.position.x === upPosition.x && player.position.y === upPosition.y) {
+          if (!player.isDeath() && player.position.x === upPosition.x && player.position.y === upPosition.y) {
             bomb.applyDamagedToPlayer(player);
+            if (player.isDeath) {
+              this.sendGameOver(player.id, "loose")
+            }
           }
         });
         if (cell.startsWith("W")) {
@@ -178,8 +184,11 @@ export default class Game {
         const cell = this.boardManager.getCell(downPosition);
         keepDownDirection = !isDirectionValid(cell); // Down
         this.playerManager.players.forEach(player => {
-          if (player.position.x === downPosition.x && player.position.y === downPosition.y) {
+          if (!player.isDeath() && player.position.x === downPosition.x && player.position.y === downPosition.y) {
             bomb.applyDamagedToPlayer(player);
+            if (player.isDeath) {
+              this.sendGameOver(player.id, "loose")
+            }
           }
         });
         if (cell.startsWith("W")) {
@@ -197,8 +206,11 @@ export default class Game {
         const cell = this.boardManager.getCell(leftPosition);
         keepLeftDirection = !isDirectionValid(cell); // Left
         this.playerManager.players.forEach(player => {
-          if (player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
+          if (!player.isDeath() && player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
             bomb.applyDamagedToPlayer(player);
+            if (player.isDeath) {
+              this.sendGameOver(player.id, "loose")
+            }
           }
         });
         if (cell.startsWith("W")) {
@@ -216,8 +228,11 @@ export default class Game {
         const cell = this.boardManager.getCell(rightPosition);
         keepRightDirection = !isDirectionValid(cell); // Right
         this.playerManager.players.forEach(player => {
-          if (player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
+          if (!player.isDeath() && player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
             bomb.applyDamagedToPlayer(player);
+            if (player.isDeath) {
+              this.sendGameOver(player.id, "loose")
+            }
           }
         });
         if (cell.startsWith("W")) {
@@ -230,6 +245,15 @@ export default class Game {
           }
         }
       }
+    }
+
+    const livingPlayers = this.playerManager.players.filter(p => !p.isDeath());
+    const numberLivingPlayer = livingPlayers.length
+
+    if (numberLivingPlayer === 1) {
+      this.sendGameOver({ id: livingPlayers[0].id, nickname: livingPlayers[0].nickname }, "win")
+    } else if (numberLivingPlayer === 0) {
+      this.sendGameOver({ id: null, nickname: null }, "draw")
     }
     sendExplodeBomb(bomb);
   }

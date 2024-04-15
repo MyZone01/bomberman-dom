@@ -18,6 +18,8 @@ export default class SocketHandler {
     this.onConnection = this.onConnection.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
     this.CreateNewUser = this.createNewPlayer.bind(this);
+    this.gameOver = this.gameOver.bind(this);
+    this.game.sendGameOver = this.gameOver;
     this.wss.on("connection", this.onConnection);
   }
 
@@ -106,7 +108,6 @@ export default class SocketHandler {
   }
 
   addBomb(message) {
-    console.log("-------------- ADD BOMB");
     const access = message.payload.access;
     const client = this.clients.get(access);
     if (client) {
@@ -126,7 +127,7 @@ export default class SocketHandler {
     }
   }
 
-  explodeBomb(bomb,) {
+  explodeBomb(bomb) {
     this.clients.forEach((c) => {
       c.send(
         JSON.stringify({
@@ -135,6 +136,21 @@ export default class SocketHandler {
         })
       );
     });
+  }
+
+  gameOver(player, result) {
+    this.clients.forEach((c) => {
+      c.send(
+        JSON.stringify({
+          type: "game-over",
+          payload: {
+            id: player.id,
+            nickname: player.nickname,
+            result
+          }
+        })
+      )
+    })
   }
 
   initGame(message) {

@@ -17,9 +17,9 @@ export default class SocketHandler {
 
   handleMessage(event) {
     const message = JSON.parse(event.data);
-    console.log('Received from server:', message.payload);
-    console.log(message);
     const type = message.type;
+
+    console.log('Received from server:', type ,message.payload);
     switch (type) {
       case 'init-game':
         const board = message.payload.board;
@@ -47,6 +47,9 @@ export default class SocketHandler {
         const bombToExplode = message.payload;
         this.game.explodeBomb(bombToExplode);
         break;
+      case 'game-over':
+        const gameOverInfos = message.payload;
+        this.game.gameOver(gameOverInfos);
       default:
         break;
     }

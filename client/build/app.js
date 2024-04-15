@@ -381,7 +381,6 @@ class page extends HTMLElement {
         <div class="message-box">
           <input type="text" value="" class="message-input" placeholder="Type message..." x-model="$inputData" />
           <button type="submit" class="message-submit" @click="
-          
           let message={
                 content: $inputData,
                 userId:$currentPlayer
