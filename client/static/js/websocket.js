@@ -24,9 +24,12 @@ export default class SocketHandler {
       case 'init-game':
         const board = message.payload.board;
         const players = message.payload.players;
-        this.game.createGameBoard(board);
-        this.game.placePlayer(players);
-        this.game.handleKeyPress(this.sendPlayerMove, this.sendAddBomb);
+        if (!this.game.initGame) {
+          this.game.createGameBoard(board);
+          this.game.placePlayer(players);
+          this.game.handleKeyPress(this.sendPlayerMove, this.sendAddBomb);
+          this.game.initGame = true;
+        }
         break;
       case 'player-move':
         const id = message.payload.id;

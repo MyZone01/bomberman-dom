@@ -2,7 +2,7 @@ const GRID_SIZE = 15
 
 export default class Game {
   constructor() {
-    this.isBoardCreated = false;
+    this.initGame = false;
     this.playAccess = "";
     this.currentPlayer = null;
     this.gameBoard = document.getElementById('game-board')
@@ -36,38 +36,35 @@ export default class Game {
   }
 
   createGameBoard(board) {
-    if (!this.isBoardCreated) {
-      const fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
 
-      for (let i = 0; i < GRID_SIZE; i++) {
-        for (let j = 0; j < GRID_SIZE; j++) {
-          if (board[i][j] === 'V') continue;
+    for (let i = 0; i < GRID_SIZE; i++) {
+      for (let j = 0; j < GRID_SIZE; j++) {
+        if (board[i][j] === 'V') continue;
 
-          const cell = document.createElement('div');
-          let cellClass = '';
-          if (board[i][j] === 'B') {
-            cellClass = 'block';
-          } else {
-            cellClass = 'wall';
-            if (board[i][j] !== 'W') {
-              cell.setAttribute('data-power', board[i][j].slice(1));
-            }
+        const cell = document.createElement('div');
+        let cellClass = '';
+        if (board[i][j] === 'B') {
+          cellClass = 'block';
+        } else {
+          cellClass = 'wall';
+          if (board[i][j] !== 'W') {
+            cell.setAttribute('data-power', board[i][j].slice(1));
           }
-
-          cell.classList.add(cellClass);
-          cell.setAttribute('id', `c-${i + 1}-${j + 1}`);
-          cell.style.gridRowStart = i + 1;
-          cell.style.gridColumnStart = j + 1;
-
-          fragment.appendChild(cell);
         }
-      }
 
-      this.gameBoard.appendChild(fragment);
-      this.gameBoard.style.setProperty('display', "grid");
-      document.getElementById("hud").style.setProperty('display', "none");
-      this.isBoardCreated = true
+        cell.classList.add(cellClass);
+        cell.setAttribute('id', `c-${i + 1}-${j + 1}`);
+        cell.style.gridRowStart = i + 1;
+        cell.style.gridColumnStart = j + 1;
+
+        fragment.appendChild(cell);
+      }
     }
+
+    this.gameBoard.appendChild(fragment);
+    this.gameBoard.style.setProperty('display', "grid");
+    document.getElementById("hud").style.setProperty('display', "none");
   }
 
   placePlayer(players) {
