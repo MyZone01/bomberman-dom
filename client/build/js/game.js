@@ -202,6 +202,10 @@ export default class Game {
         case "ArrowRight":
           sendPlayerMove({ x: 1, y: 0 });
           break;
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      switch (e.key) {
         case " ":
           senAddBomb();
           break;

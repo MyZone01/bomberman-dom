@@ -3,7 +3,8 @@ import BombManager from "./bombManager.js";
 import PlayerManager from "./playerManager.js";
 import TaskScheduler from "./taskScheduler.js";
 import Player from "../../shared/models/player.js";
-import { BOMB_TIMER, GRID_SIZE } from "../../shared/constants.js";
+import { BLOCK_CELL, BOMB_TIMER, DEFAULT_BOMB_AMOUNT, EXTRA_BOMB, EXTRA_LIFE, GRID_SIZE, MANUAL_BOMB, POWER_UP_TIMER, SUPER_BOMB, WALL_CELL } from "../../shared/constants.js";
+import { uuid } from "../utils/helper.js";
 
 const playerDefaultPosition = [
   { x: 2, y: 2 },
@@ -42,11 +43,8 @@ export default class Game {
   movePlayer(access, direction) {
     const player = this.playerManager.getPlayerByAccess(access);
 
-    if (player && !player.isMoving()) {
-      let toRemove = false
-      if (player.isDeath()) {
-        return { id: player.id, position: null, nbrLife: player.numberOfLife, toRemove: false };
-      }
+    if (player && !player.isMoving() && !player.isDeath()) {
+      let toRemove = false;
       const newPosition = {
         x: player.position.x + direction.x,
         y: player.position.y + direction.y
@@ -55,22 +53,38 @@ export default class Game {
       if (moveResult.valid) {
         const cell = moveResult.cellType;
         player.move(direction, newPosition);
-        if (cell == 'S') {
+        if (cell === SUPER_BOMB) {
           player.currentBombType = "super"
           this.boardManager.makeCellEmpty(newPosition);
+          const taskID = uuid();
+          this.taskScheduler.scheduleTask(taskID, () => {
+            player.currentBombType = "simple"
+          }, POWER_UP_TIMER);
+          this.taskScheduler.startTask(taskID);
           toRemove = true
-        } else if (cell == 'M') {
-          if (player.numberOfLife < 3) {
+        } else if (cell === EXTRA_BOMB) {
+          player.bombAmount += 1
+          player.availableBombs += 1
+          this.boardManager.makeCellEmpty(newPosition);
+          const taskID = uuid();
+          this.taskScheduler.scheduleTask(taskID, () => {
+            player.bombAmount = DEFAULT_BOMB_AMOUNT
+          }, POWER_UP_TIMER);
+          toRemove = true
+        } else if (cell === MANUAL_BOMB) {
+          player.currentBombType = "manual"
+          this.boardManager.makeCellEmpty(newPosition);
+          const taskID = uuid();
+          this.taskScheduler.scheduleTask(taskID, () => {
+            player.currentBombType = "simple"
+          }, POWER_UP_TIMER);
+          this.taskScheduler.startTask(taskID);
+          toRemove = true
+        } else if (cell === EXTRA_LIFE) {
+          if (player.numberOfLife < 5) {
             player.numberOfLife += 1;
             toRemove = true
             this.boardManager.makeCellEmpty(newPosition);
-          }
-        } else if (cell == 'X') {
-          if (player.availableBombs < 3 && player.bombAmount < 3) {
-            player.bombAmount += 1
-            player.availableBombs += 1
-            this.boardManager.makeCellEmpty(newPosition);
-            toRemove = true
           }
         }
         return { id: player.id, position: newPosition, nbrLife: player.numberOfLife, toRemove: toRemove };
@@ -95,23 +109,29 @@ export default class Game {
 
   addBomb(access, sendExplodeBomb) {
     const player = this.playerManager.getPlayerByAccess(access);
-    if (player.isDeath()) {
-      return null;
-    }
-    if (player && player.availableBombs > 0) {
-      const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
-      this.boardManager.setCell(player.position, "B", true);
-      player.availableBombs--;
-      if (player.currentBombType === "manual") {
-        this.bombManager.makeManual(bomb.id)
+    if (player && player.availableBombs > 0 && !player.isDeath()) {
+      if (player.currentManualBomb !== 0) {
+        console.log(">>>>>>>>>>>>>>>>> MANUAL");
+        const bomb = this.bombManager.getBombByID(player.currentManualBomb);
+        player.currentManualBomb = 0;
+        this.explodeBomb(bomb, player, sendExplodeBomb);
+        return null;
       } else {
-        if (player.bombType === "super") {
-          bomb.explosionRadius = 2;
+        const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
+        this.boardManager.setCell(player.position, "B", true);
+        player.availableBombs--;
+        if (player.currentBombType === "manual") {
+          player.currentManualBomb = bomb.id;
+          this.bombManager.makeManual(bomb.id)
+        } else {
+          if (player.bombType === "super") {
+            bomb.explosionRadius = 3;
+          }
+          this.taskScheduler.scheduleTask(bomb.id, () => this.explodeBomb(bomb, player, sendExplodeBomb), BOMB_TIMER);
+          this.taskScheduler.startTask(bomb.id);
         }
-        this.taskScheduler.scheduleTask(bomb.id, () => this.explodeBomb(bomb, player, sendExplodeBomb), BOMB_TIMER);
-        this.taskScheduler.startTask(bomb.id);
+        return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
       }
-      return { id: bomb.id, position: { x: bomb.x, y: bomb.y } };
     }
     return null;
   }
@@ -212,7 +232,6 @@ export default class Game {
     }
     sendExplodeBomb(bomb);
   }
-
 }
 
 function getBombRadius(bombType) {
@@ -227,9 +246,9 @@ function getBombRadius(bombType) {
 }
 
 export function isDirectionValid(cell) {
-  if (cell.startsWith('W')) {
+  if (cell.startsWith(WALL_CELL)) {
     return false;
-  } else if (cell === 'B') {
+  } else if (cell === BLOCK_CELL) {
     return true;
   } else {
     return false

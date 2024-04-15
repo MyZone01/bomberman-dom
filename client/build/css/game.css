@@ -44,7 +44,7 @@ body {
 
 #game-over-menu p,
 #pause-menu p {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 #game-over-menu .content,
@@ -117,6 +117,7 @@ body {
 
 #game-board {
   background-color: #03280a;
+  overflow: hidden;
   /* background-image: url(./img/grass.png); */
   width: 95vmin;
   height: 95vmin;
@@ -131,7 +132,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 2rem !important;
   margin: 2.5px;
   /* background-color: #9900ff;
     border: .25vmin solid black; */

@@ -10,6 +10,10 @@ export default class BombManager {
     return bomb;
   }
 
+  getBombByID(id) {
+    return this.bombs.find(b => b.id === id);
+  }
+
   addBomb(position, explosionRadius) {
     const bomb = new Bomb(position.x, position.y, explosionRadius);
     this.bombs.push(bomb);

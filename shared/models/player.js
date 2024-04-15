@@ -1,3 +1,5 @@
+import { DEFAULT_BOMB_AMOUNT } from "../constants.js";
+
 export default class Player {
   constructor(id, access, nickname, position, avatar) {
     this.id = id;
@@ -7,8 +9,9 @@ export default class Player {
     this.position = position;
     this.inputDirection = { x: 0, y: 0 };
     this.avatar = avatar;
-    this.currentBombType = "super";
-    this.bombAmount = 3;
+    this.currentBombType = "simple";
+    this.currentManualBomb = 0;
+    this.bombAmount = DEFAULT_BOMB_AMOUNT;
     this.availableBombs = this.bombAmount;
   }
 

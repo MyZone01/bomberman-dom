@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "../../shared/constants.js";
+import { GRID_SIZE, POWER_UP_TYPES } from "../../shared/constants.js";
 
 export default class BoardManager {
   constructor() {
@@ -23,8 +23,7 @@ export default class BoardManager {
     for (let i = 0; i < GRID_SIZE; i++) {
       for (let j = 0; j < GRID_SIZE; j++) {
         if (this.board[i][j] === 'W' && Math.random() < 0.4) {
-          const powerUpTypes = ['X', 'S', 'M'];
-          const randomPowerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+          const randomPowerUp = POWER_UP_TYPES[Math.floor(Math.random() * POWER_UP_TYPES.length)];
           this.board[i][j] += randomPowerUp;
         }
       }
@@ -33,29 +32,16 @@ export default class BoardManager {
 
   isValidMove(position) {
     const cell = this.getCell(position);
-    const valid = cell === 'V' || cell === 'S' || cell === 'M' || cell === 'X';
-    if (!valid) {
-      console.log("Invalid move", position, cell);
-    }
+    const valid = POWER_UP_TYPES.includes(cell) || cell === 'V';
     return { valid, cellType: cell };;
   }
 
-  setCell(position, value, vag = false) {
-    // if (vag) {
-    //   this.board[position.y][position.x] = value;
-    // }
-    // else {
-      this.board[position.y - 1][position.x - 1] = value;
-    // }
+  setCell(position, value) {
+    this.board[position.y - 1][position.x - 1] = value;
   }
 
-  getCell(position, vag = false) {
-    // if (vag) {
-    //   return this.board[position.y][position.x];
-    // }
-    // else {
-      return this.board[position.y - 1][position.x - 1];
-    // }
+  getCell(position) {
+    return this.board[position.y - 1][position.x - 1];
   }
 
   removeWall(position) {
@@ -65,7 +51,6 @@ export default class BoardManager {
     } else {
       const powerUp = cell[1];
       this.setCell(position, powerUp, true);
-      console.log("remove cell", cell, this.getCell(position, true), this.board[1]);
     }
   }
 
