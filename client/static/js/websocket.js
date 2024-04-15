@@ -19,12 +19,12 @@ export default class SocketHandler {
     const message = JSON.parse(event.data);
     const type = message.type;
 
-    console.log('Received from server:', type ,message.payload);
+    console.log('Received from server:', type, message.payload);
     switch (type) {
       case 'init-game':
-        const board = message.payload.board;
-        const players = message.payload.players;
         if (!this.game.initGame) {
+          const board = message.payload.board;
+          const players = message.payload.players;
           this.game.createGameBoard(board);
           this.game.placePlayer(players);
           this.game.handleKeyPress(this.sendPlayerMove, this.sendAddBomb);

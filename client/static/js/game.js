@@ -12,11 +12,15 @@ export default class Game {
 
   gameOver(gameOverInfos) {
     if (gameOverInfos.result === "win") {
-      this.showGameOver("💥 CONGRATULATION!")
+      if (this.currentPlayer.id === gameOverInfos.id) {
+        this.showGameOver("💥 CONGRATULATION!")
+      } else {
+        this.showGameOver(gameOverInfos.nickname + " IS THE WINNER!")
+      }
     } else {
       const element = document.getElementById(gameOverInfos.id);
       this.gameBoard.removeChild(element);
-      if (this.currentPlayer === gameOverInfos.id) {
+      if (this.currentPlayer.id === gameOverInfos.id) {
         this.controller.abort();
         this.showGameOver("💀 LOOSER!")
       } else {
