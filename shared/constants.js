@@ -16,5 +16,5 @@ export const POWER_UP_TYPES = [
   MANUAL_BOMB,
   EXTRA_LIFE,
 ];
-export const WAITING_TIME = 3;
-export const STARTING_TIME = 1;
+export const WAITING_TIME = 0;
+export const STARTING_TIME = 0;

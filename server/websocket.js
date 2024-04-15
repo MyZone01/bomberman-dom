@@ -106,6 +106,7 @@ export default class SocketHandler {
   }
 
   addBomb(message) {
+    console.log("-------------- ADD BOMB");
     const access = message.payload.access;
     const client = this.clients.get(access);
     if (client) {

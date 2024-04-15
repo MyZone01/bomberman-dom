@@ -23,13 +23,4 @@ export default class BombManager {
   removeBomb(id) {
     this.bombs = this.bombs.filter(b => b.id !== id);
   }
-
-  makeManual(id) {
-    this.bombs = this.bombs.map(b => {
-      if (b.id === id) {
-        b.manualBomb = true;
-      }
-      return b;
-    });
-  }
 }

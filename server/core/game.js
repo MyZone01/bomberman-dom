@@ -109,21 +109,22 @@ export default class Game {
 
   addBomb(access, sendExplodeBomb) {
     const player = this.playerManager.getPlayerByAccess(access);
-    if (player && player.availableBombs > 0 && !player.isDeath()) {
+    if (player && !player.isDeath()) {
+      console.log(">>>>>>>>>>>>>>>>> MANUAL", player.currentManualBomb);
       if (player.currentManualBomb !== 0) {
-        console.log(">>>>>>>>>>>>>>>>> MANUAL");
         const bomb = this.bombManager.getBombByID(player.currentManualBomb);
         player.currentManualBomb = 0;
         this.explodeBomb(bomb, player, sendExplodeBomb);
         return null;
-      } else {
+      } else if (player.availableBombs > 0) {
         const bomb = this.bombManager.addBomb(player.position, getBombRadius(player.currentBombType));
         this.boardManager.setCell(player.position, "B", true);
         player.availableBombs--;
         if (player.currentBombType === "manual") {
           player.currentManualBomb = bomb.id;
-          this.bombManager.makeManual(bomb.id)
-        } else {
+          console.log("ADD BOMB", player.currentBombType, player.currentManualBomb, bomb.id);
+          bomb.manualBomb = true
+        } else { 
           if (player.bombType === "super") {
             bomb.explosionRadius = 3;
           }
