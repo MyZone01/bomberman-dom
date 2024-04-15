@@ -25,9 +25,11 @@ export default class SocketHandler {
         if (!this.game.initGame) {
           const board = message.payload.board;
           const players = message.payload.players;
+          const currentId = message.payload.currentId;
           this.game.createGameBoard(board);
           this.game.placePlayer(players);
           this.game.handleKeyPress(this.sendPlayerMove, this.sendAddBomb);
+          this.game.setCurrentPlayer(currentId);
           this.game.initGame = true;
         }
         break;

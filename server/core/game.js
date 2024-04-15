@@ -29,10 +29,6 @@ export default class Game {
     return this.boardManager.board
   }
 
-  startGameLoop() {
-
-  }
-
   addPlayer(access, nickname, avatar) {
     const id = 'player-' + this.numberOfPlayer;
     const position = playerDefaultPosition[this.numberOfPlayer];
@@ -150,7 +146,7 @@ export default class Game {
     this.playerManager.players.forEach(player => {
       if (!player.isDeath() && player.position.x === bomb.x && player.position.y === bomb.y) {
         bomb.applyDamagedToPlayer(player);
-        if (player.isDeath) {
+        if (player.isDeath()) {
           this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
         }
       }
@@ -164,8 +160,8 @@ export default class Game {
         this.playerManager.players.forEach(player => {
           if (!player.isDeath() && player.position.x === upPosition.x && player.position.y === upPosition.y) {
             bomb.applyDamagedToPlayer(player);
-            if (player.isDeath) {
-              this.sendGameOver(player.id, "loose")
+            if (player.isDeath()) {
+              this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
             }
           }
         });
@@ -186,8 +182,8 @@ export default class Game {
         this.playerManager.players.forEach(player => {
           if (!player.isDeath() && player.position.x === downPosition.x && player.position.y === downPosition.y) {
             bomb.applyDamagedToPlayer(player);
-            if (player.isDeath) {
-              this.sendGameOver(player.id, "loose")
+            if (player.isDeath()) {
+              this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
             }
           }
         });
@@ -208,8 +204,8 @@ export default class Game {
         this.playerManager.players.forEach(player => {
           if (!player.isDeath() && player.position.x === leftPosition.x && player.position.y === leftPosition.y) {
             bomb.applyDamagedToPlayer(player);
-            if (player.isDeath) {
-              this.sendGameOver(player.id, "loose")
+            if (player.isDeath()) {
+              this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
             }
           }
         });
@@ -230,8 +226,8 @@ export default class Game {
         this.playerManager.players.forEach(player => {
           if (!player.isDeath() && player.position.x === rightPosition.x && player.position.y === rightPosition.y) {
             bomb.applyDamagedToPlayer(player);
-            if (player.isDeath) {
-              this.sendGameOver(player.id, "loose")
+            if (player.isDeath()) {
+              this.sendGameOver({ id: player.id, nickname: player.nickname }, "loose")
             }
           }
         });
@@ -248,7 +244,9 @@ export default class Game {
     }
 
     const livingPlayers = this.playerManager.players.filter(p => !p.isDeath());
-    const numberLivingPlayer = livingPlayers.length
+    const numberLivingPlayer = livingPlayers.length;
+    console.log("Number of living player: ", numberLivingPlayer);
+    console.log("Living players: ", livingPlayers);
 
     if (numberLivingPlayer === 1) {
       this.sendGameOver({ id: livingPlayers[0].id, nickname: livingPlayers[0].nickname }, "win")

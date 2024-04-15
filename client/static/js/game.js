@@ -12,7 +12,7 @@ export default class Game {
 
   gameOver(gameOverInfos) {
     if (gameOverInfos.result === "win") {
-      if (this.currentPlayer.id === gameOverInfos.id) {
+      if (this.currentPlayer === gameOverInfos.id) {
         this.showGameOver("💥 CONGRATULATION!")
       } else {
         this.showGameOver(gameOverInfos.nickname + " IS THE WINNER!")
@@ -20,7 +20,7 @@ export default class Game {
     } else {
       const element = document.getElementById(gameOverInfos.id);
       this.gameBoard.removeChild(element);
-      if (this.currentPlayer.id === gameOverInfos.id) {
+      if (this.currentPlayer === gameOverInfos.id) {
         this.controller.abort();
         this.showGameOver("💀 LOOSER!")
       } else {
@@ -35,8 +35,8 @@ export default class Game {
     this.hideGameOverModal = setTimeout(() => this.gameOverModal.innerHTML = "", 3000)
   }
 
-  setCurrentPlayer(player) {
-    this.currentPlayer = player;
+  setCurrentPlayer(playerId) {
+    this.currentPlayer = playerId;
   }
 
   createGameBoard(board) {
@@ -188,6 +188,7 @@ export default class Game {
     if (bomb.damagedPlayer.length > 0) {
       bomb.damagedPlayer.forEach(player => {
         let playerElement = document.getElementById(player.id)
+        if (!playerElement) return;
         const blinkInterval = setInterval(() => {
           if (playerElement.style.visibility === "hidden") {
             playerElement.style.visibility = "visible";

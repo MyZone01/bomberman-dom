@@ -157,22 +157,18 @@ export default class SocketHandler {
     const access = message.payload.access;
     const client = this.clients.get(access);
     if (client) {
-      this.clients.forEach((c) => {
-        c.send(
-          JSON.stringify({
-            type: "init-game",
-            payload: {
-              board: this.game.board(),
-              players: this.game.players(),
-            },
-          })
-        );
-      });
+      const player = this.PlayersManage.getPlayerByAccess(access);
+      client.send(
+        JSON.stringify({
+          type: "init-game",
+          payload: {
+            board: this.game.board(),
+            players: this.game.players(),
+            currentId: player.id
+          },
+        })
+      );
     }
-  }
-
-  runGame() {
-    this.game.startGameLoop();
   }
 
   register(message, ws, player) {
