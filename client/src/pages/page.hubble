@@ -225,9 +225,6 @@
     }
   }
 </style>
-<script>
-  window.ws = new WebSocket(`ws://${window.location.hostname}:8080`);
-</script>
 <main x-data="{emojis:[
     { name: '😁', selected: false },
     { name: '😡', selected: false },
@@ -284,17 +281,18 @@
                 emoji:$selectedEmoji
               }
               if ($isListening) {
-                window.ws= window.ws
+                window.ws = new WebSocket(`ws://${window.location.hostname}:8080`);
+                $ws= window.ws
 
-                window.ws.addEventListener('open', () => {
+                $ws.addEventListener('open', () => {
                   console.log('Connected to server',player);
                   $isListening=false
-                  window.ws.send(JSON.stringify({
+                  $ws.send(JSON.stringify({
                       type: 'create-player',
                       payload: player
                     }))
                 });
-                window.ws.onmessage = function(event) {
+                $ws.onmessage = function(event) {
                   let data=JSON.parse(event.data)
                   if (data?.type ==='create-successfully') {
                     $isConnected=true
@@ -321,7 +319,7 @@
                     link.setAttribute('href','/css/game.css') 
                     document.querySelector('head').appendChild(link)
                   }else{
-                    window.ws=null
+                    $ws=null
                     $errorForm=data?.payload
                     console.log($errorForm);
                   }
@@ -375,7 +373,7 @@
                 userId:$currentPlayer
               }
               console.log('message to send',message);
-              window.ws.send(JSON.stringify({
+              $ws.send(JSON.stringify({
                   type: 'chat',
                   payload: message
               }))
