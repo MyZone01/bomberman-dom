@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import { uuid } from "./utils/helper.js";
 import PlayersManager from "./core/playerManager.js";
-import { MAX_PLAYERS, SERVER_PORT, WAITING_TIME } from "../shared/constants.js";
+import { MAX_PLAYERS, SERVER_PORT, STARTING_TIME, WAITING_TIME } from "../shared/constants.js";
 
 export default class SocketHandler {
   constructor(game) {
@@ -125,17 +125,12 @@ export default class SocketHandler {
     }
   }
 
-  explodeBomb(bomb, position) {
+  explodeBomb(bomb,) {
     this.clients.forEach((c) => {
       c.send(
         JSON.stringify({
           type: "explode-bomb",
-          payload: {
-            id: bomb.id,
-            radius: bomb.explosionRadius,
-            position,
-            damagedPlayer: bomb.damagedPlayer,
-          },
+          payload: bomb,
         })
       );
     });
@@ -209,11 +204,11 @@ export default class SocketHandler {
     if (this.initialTimer && this.game.numberOfPlayer > 1) {
       let intervalTimer = setInterval(() => {
         if (this.game.numberOfPlayer >= 4 && !this.starGame) {
-          this.timer = 10
+          this.timer = STARTING_TIME
           this.starGame = true
         }
         if (this.timer < 0 && this.game.numberOfPlayer < MAX_PLAYERS && !this.starGame) {
-          this.timer = 10
+          this.timer = STARTING_TIME
           this.starGame = true
         }
         if (this.timer < 0) {

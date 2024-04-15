@@ -100,8 +100,8 @@ export default class Game {
     const element = document.createElement("div");
     element.classList.add("bomb");
     element.setAttribute("id", bomb.id);
-    element.style.gridRowStart = bomb.y;
-    element.style.gridColumnStart = bomb.x;
+    element.style.gridRowStart = bomb.position.y;
+    element.style.gridColumnStart = bomb.position.x;
 
     const verticalBlast = document.createElement("div")
     const horizontalBlast = document.createElement("div")
@@ -126,7 +126,7 @@ export default class Game {
     let keepLeftDirection = true;
     let keepRightDirection = true;
 
-    for (let i = 1; i <= bomb.radius; i++) {
+    for (let i = 1; i <= bomb.explosionRadius; i++) {
       if (keepUpDirection) {
         keepUpDirection = this.explodeInDirection(bomb.x, bomb.y - i); // Up
         if (keepUpDirection) {
