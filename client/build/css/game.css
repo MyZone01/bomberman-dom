@@ -44,7 +44,7 @@ body {
 
 #game-over-menu p,
 #pause-menu p {
-  font-size: 2.125rem;
+  font-size: 1.6rem;
 }
 
 #game-over-menu .content,
@@ -79,7 +79,7 @@ body {
   padding: 10px 20px;
   margin: 10px;
   cursor: pointer;
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   transform: skew(21deg);
   letter-spacing: .125rem;
   font-family: Blomberg;
@@ -111,7 +111,7 @@ body {
 .hud-element {
   letter-spacing: .125rem;
   font-family: Blomberg;
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   margin: 5px 0;
 }
 
@@ -119,8 +119,6 @@ body {
   background-color: #03280a;
   overflow: hidden;
   /* background-image: url(./img/grass.png); */
-  width: 95vmin;
-  height: 95vmin;
   display: grid;
   border-radius: .25rem;
   grid-template-rows: repeat(17, 1fr);
@@ -132,7 +130,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.125rem !important;
+  font-size: 1.6rem !important;
   margin: 2.5px;
   /* background-color: #9900ff;
     border: .25vmin solid black; */
@@ -165,7 +163,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.125rem;
+    font-size: 1.6rem;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
     background-color: white;
@@ -179,7 +177,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.125rem;
+  font-size: 1.6rem;
 }
 
 .enemy::after {
@@ -194,7 +192,7 @@ body {
     top: 10px;
     display: block;
     border-radius: 100%;
-    font-size: 2.125rem;
+    font-size: 1.6rem;
     width: 7px;
     height: 7px;
   }
@@ -218,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   z-index: 5;
   animation: bomb 1s ease-in-out infinite;
 }
@@ -328,7 +326,7 @@ body {
 }
 
 .block {
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   /* background-color: #0b0b8a; */
 }
 
@@ -337,7 +335,7 @@ body {
 }
 
 .wall {
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   /* background-color: #3e3b3b; */
 }
 
@@ -351,7 +349,7 @@ body {
   justify-content: center;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bolder;
-  font-size: 2.125rem;
+  font-size: 1.6rem;
   border-radius: 10px;
   box-shadow: 2.5px 2.5px 5px #7c9270f0,
     -2.5px -2.5px 5px #c4cfc3eb;
