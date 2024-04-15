@@ -294,7 +294,7 @@ class page extends HTMLElement {
                 emoji:$selectedEmoji
               }
               if ($isListening) {
-                window.ws = new WebSocket('ws://localhost:8080');
+                window.ws = new WebSocket(\`ws://${window.location.hostname}:8080\`);
                 $ws= window.ws
 
                 $ws.addEventListener('open', () => {
