@@ -134,7 +134,7 @@ export default class Game {
   }
 
   explodeBomb(bomb, player, sendExplodeBomb) {
-    this.bombManager.removeBomb(bomb.id);
+    this.bombManager.removeBomb(bomb?.id);
     this.boardManager.setCell({ x: bomb.x, y: bomb.y }, "V", true);
     player.availableBombs = player.bombAmount;
 

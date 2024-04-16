@@ -294,34 +294,46 @@
                 });
                 $ws.onmessage = function(event) {
                   let data=JSON.parse(event.data)
-                  if (data?.type ==='create-successfully') {
-                    $isConnected=true
-                    $messages=data?.payload?.messages|| []
-                    window.access=data?.payload?.id
-                    $currentPlayer=data?.payload?.id
-                  }else if (data?.type ==='chat'){
-                    console.log('new message',data?.payload);
-                    $messages=[...data?.payload?.messages] || []
-                  }else if (data?.type ==='new-player'){
-                    $players=data?.payload?.players
-                    console.log('new player',$players);
-                  }else if (data?.type ==='timer'){
-                    $timer=data?.payload?.timer
-                    console.log('timer',$timer);
-                  }else if (data?.type ==='ready-init-game'){
-                    let script=document.createElement('script')
-                    script.setAttribute('type','module') 
-                    script.setAttribute('src','/js/main.js') 
-                    document.querySelector('body').appendChild(script)
+                  switch(data?.type) {
+                    case 'create-successfully':
+                      // code block
+                      $isConnected=true
+                      $messages=data?.payload?.messages|| []
+                      window.access=data?.payload?.id
+                      $currentPlayer=data?.payload?.id
+                      break;
+                    case 'chat':
+                      // code block
+                      console.log('new message',data?.payload);
+                      $messages=[...data?.payload?.messages] || []
+                      break
+                    case 'new-player':
+                      // code block
+                      $players=data?.payload?.players
+                      console.log('new player',$players);
+                      break
+                    case 'timer':
+                      // code block
+                      $timer=data?.payload?.timer
+                      console.log('timer',$timer);
+                      break;
+                    case 'ready-init-game':
+                      // code block
+                      let script=document.createElement('script')
+                      script.setAttribute('type','module') 
+                      script.setAttribute('src','/js/main.js') 
+                      document.querySelector('body').appendChild(script)
 
-                    let link=document.createElement('link')
-                    link.setAttribute('rel','stylesheet') 
-                    link.setAttribute('href','/css/game.css') 
-                    document.querySelector('head').appendChild(link)
-                  }else{
-                    $ws=null
-                    $errorForm=data?.payload
-                    console.log($errorForm);
+                      let link=document.createElement('link')
+                      link.setAttribute('rel','stylesheet') 
+                      link.setAttribute('href','/css/game.css') 
+                      document.querySelector('head').appendChild(link)
+                    break;
+                      $ws=null
+                      $errorForm=data?.payload
+                      console.log($errorForm);
+                    default:
+                      // code block
                   }
                 };
               }
